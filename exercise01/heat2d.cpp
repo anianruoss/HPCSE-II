@@ -6,20 +6,20 @@
 
 class GridLevel {
 public:
-  size_t N;   // Number of points per dimension in the grid level
-  double h;   // DeltaX = DeltaY, the distance between points in the 
-              // discretized [0,1]x[0,1] domain
-  double **f; // Right hand side (external heat sources)
-  double **U; // Main grid for Jacobi
+  size_t N;     // Number of points per dimension in the grid level
+  double h;     // DeltaX = DeltaY, the distance between points in the
+                // discretized [0,1]x[0,1] domain
+  double **f;   // Right hand side (external heat sources)
+  double **U;   // Main grid for Jacobi
   double **Un;  // Previous' step grid
   double **Res; // Residual Grid
 };
 
 void heat2DSolver(Heat2DSetup &s) {
   const int gridCount = 6;
-  s.setGridCount(gridCount);     // Number of Multigrid levels to use
-  s.downRelaxations = 3; // Number of Relaxations before restriction
-  s.upRelaxations = 1;   // Number of Relaxations after prolongation
+  s.setGridCount(gridCount); // Number of Multigrid levels to use
+  s.downRelaxations = 3;     // Number of Relaxations before restriction
+  s.upRelaxations = 1;       // Number of Relaxations after prolongation
 
   auto *g = (GridLevel *)calloc(sizeof(GridLevel), s.gridCount);
 
