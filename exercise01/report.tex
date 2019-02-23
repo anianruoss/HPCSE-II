@@ -109,4 +109,13 @@ bsub -n 24 -R fullnode -R "select[model=XeonE5_2680v3]" -Is bash
         relevant data is stored contiguously in memory.
     \end{enumerate}
 
+    \begin{table}[H]
+        \caption{Iterations and running times for the three problems after
+        all optimizations have been performed.}
+        \begin{center}
+            \input{./data/optimal_problem.tex}
+        \end{center}
+        \label{table:FinalTimes}
+    \end{table}
+
 \end{document}
