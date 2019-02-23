@@ -1,7 +1,7 @@
 #include "auxiliar/auxiliar.hpp"
-#include <cmath>
-#include <cstdio>
-#include <cstdlib>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 class GridLevel {
 public:
@@ -21,7 +21,7 @@ void heat2DSolver(Heat2DSetup &s) {
   s.upRelaxations = 1;   // Number of Relaxations after prolongation
 
   // Allocating Grids -- Is there a better way to allocate these grids?
-  auto *g = (GridLevel *)calloc(sizeof(GridLevel), s.gridCount);
+  GridLevel *g = (GridLevel *)calloc(sizeof(GridLevel), s.gridCount);
   for (int i = 0; i < s.gridCount; i++) {
     g[i].N = pow(2, s.N0 - i) + 1;
     g[i].h = 1.0 / (g[i].N - 1);
