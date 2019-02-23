@@ -92,22 +92,26 @@ void applyJacobi(GridLevel *g, int l, int relaxations) {
       for (int j = 0; j < g[l].N; j++)
         g[l].Un[i][j] = g[l].U[i][j];
 
+    auto g_l_h_squared = g[l].h * g[l].h;
+
     for (int i = 1; i < g[l].N - 1; i++)
       for (int j = 1; j < g[l].N - 1; j++) // Perform a Jacobi Iteration
-        g[l].U[i][j] = (g[l].Un[i - 1][j] + g[l].Un[i + 1][j] +
-                        g[l].Un[i][j - 1] + g[l].Un[i][j + 1]) /
-                           4 +
-                       g[l].f[i][j] * pow(g[l].h, 2) / 4;
+        g[l].U[i][j] =
+            (g[l].Un[i - 1][j] + g[l].Un[i + 1][j] + g[l].Un[i][j - 1] +
+             g[l].Un[i][j + 1] + g[l].f[i][j] * g_l_h_squared) *
+            0.25;
   }
 }
 
 void calculateResidual(GridLevel *g, int l) {
+  auto inv_g_l_h_squared = 1. / (g[l].h * g[l].h);
+
   for (int i = 1; i < g[l].N - 1; i++)
     for (int j = 1; j < g[l].N - 1; j++)
       g[l].Res[i][j] = g[l].f[i][j] +
                        (g[l].U[i - 1][j] + g[l].U[i + 1][j] - 4 * g[l].U[i][j] +
-                        g[l].U[i][j - 1] + g[l].U[i][j + 1]) /
-                           (pow(g[l].h, 2));
+                        g[l].U[i][j - 1] + g[l].U[i][j + 1]) *
+                           inv_g_l_h_squared;
 }
 
 double calculateL2Norm(GridLevel *g, int l) {
@@ -126,16 +130,16 @@ double calculateL2Norm(GridLevel *g, int l) {
 void applyRestriction(GridLevel *g, int l) {
   for (int i = 1; i < g[l].N - 1; i++) {
     for (int j = 1; j < g[l].N - 1; j++) {
-      g[l].f[i][j] = (1.0 * (g[l - 1].Res[2 * i - 1][2 * j - 1] +
-                             g[l - 1].Res[2 * i - 1][2 * j + 1] +
-                             g[l - 1].Res[2 * i + 1][2 * j - 1] +
-                             g[l - 1].Res[2 * i + 1][2 * j + 1]) +
+      g[l].f[i][j] = (g[l - 1].Res[2 * i - 1][2 * j - 1] +
+                      g[l - 1].Res[2 * i - 1][2 * j + 1] +
+                      g[l - 1].Res[2 * i + 1][2 * j - 1] +
+                      g[l - 1].Res[2 * i + 1][2 * j + 1] +
                       2.0 * (g[l - 1].Res[2 * i - 1][2 * j] +
                              g[l - 1].Res[2 * i][2 * j - 1] +
                              g[l - 1].Res[2 * i + 1][2 * j] +
                              g[l - 1].Res[2 * i][2 * j + 1]) +
-                      4.0 * (g[l - 1].Res[2 * i][2 * j])) /
-                     16;
+                      4.0 * (g[l - 1].Res[2 * i][2 * j])) *
+                     0.0625;
       g[l].U[i][j] = 0;
     }
   }
@@ -148,18 +152,18 @@ void applyProlongation(GridLevel *g, int l) {
 
   for (int i = 1; i < g[l].N; i++)
     for (int j = 1; j < g[l].N - 1; j++)
-      g[l - 1].Un[2 * i - 1][2 * j] = (g[l].U[i - 1][j] + g[l].U[i][j]) / 2;
+      g[l - 1].Un[2 * i - 1][2 * j] = (g[l].U[i - 1][j] + g[l].U[i][j]) * 0.5;
 
   for (int i = 1; i < g[l].N - 1; i++)
     for (int j = 1; j < g[l].N; j++)
-      g[l - 1].Un[2 * i][2 * j - 1] = (g[l].U[i][j - 1] + g[l].U[i][j]) / 2;
+      g[l - 1].Un[2 * i][2 * j - 1] = (g[l].U[i][j - 1] + g[l].U[i][j]) * 0.5;
 
   for (int i = 1; i < g[l].N; i++)
     for (int j = 1; j < g[l].N; j++)
       g[l - 1].Un[2 * i - 1][2 * j - 1] =
           (g[l].U[i - 1][j - 1] + g[l].U[i - 1][j] + g[l].U[i][j - 1] +
-           g[l].U[i][j]) /
-          4;
+           g[l].U[i][j]) *
+          0.25;
 
   for (int i = 0; i < g[l - 1].N; i++)
     for (int j = 0; j < g[l - 1].N; j++)
