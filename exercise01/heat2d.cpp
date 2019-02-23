@@ -21,26 +21,35 @@ void heat2DSolver(Heat2DSetup &s) {
   s.upRelaxations = 1;   // Number of Relaxations after prolongation
 
   // Allocating Grids -- Is there a better way to allocate these grids?
-  GridLevel *g = (GridLevel *)calloc(sizeof(GridLevel), s.gridCount);
+  auto *g = (GridLevel *)calloc(sizeof(GridLevel), s.gridCount);
+
   for (int i = 0; i < s.gridCount; i++) {
     g[i].N = pow(2, s.N0 - i) + 1;
     g[i].h = 1.0 / (g[i].N - 1);
+  }
 
+  for (int i = 0; i < s.gridCount; i++) {
     g[i].U = (double **)calloc(sizeof(double *), g[i].N);
     for (int j = 0; j < g[i].N; j++) {
       g[i].U[j] = (double *)calloc(sizeof(double), g[i].N);
     }
+  }
 
+  for (int i = 0; i < s.gridCount; i++) {
     g[i].Un = (double **)calloc(sizeof(double *), g[i].N);
     for (int j = 0; j < g[i].N; j++) {
       g[i].Un[j] = (double *)calloc(sizeof(double), g[i].N);
     }
+  }
 
+  for (int i = 0; i < s.gridCount; i++) {
     g[i].Res = (double **)calloc(sizeof(double *), g[i].N);
     for (int j = 0; j < g[i].N; j++) {
       g[i].Res[j] = (double *)calloc(sizeof(double), g[i].N);
     }
+  }
 
+  for (int i = 0; i < s.gridCount; i++) {
     g[i].f = (double **)calloc(sizeof(double *), g[i].N);
     for (int j = 0; j < g[i].N; j++) {
       g[i].f[j] = (double *)calloc(sizeof(double), g[i].N);
@@ -86,11 +95,7 @@ void heat2DSolver(Heat2DSetup &s) {
 
 void applyJacobi(GridLevel *g, int l, int relaxations) {
   for (int r = 0; r < relaxations; r++) {
-    // Update Un <- U0; Is this really necessary? Could we use some pointer
-    // magic here?
-    for (int i = 0; i < g[l].N; i++)
-      for (int j = 0; j < g[l].N; j++)
-        g[l].Un[i][j] = g[l].U[i][j];
+    g[l].Un = g[l].U;
 
     auto g_l_h_squared = g[l].h * g[l].h;
 
