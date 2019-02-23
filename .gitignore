@@ -33,3 +33,6 @@
 
 # JetBrains files
 .idea/
+
+# build directory
+build
