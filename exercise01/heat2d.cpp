@@ -17,40 +17,41 @@ public:
 
 void heat2DSolver(Heat2DSetup &s) {
   // Multigrid parameters -- Find the best configuration!
-  s.setGridCount(6);     // Number of Multigrid levels to use
+  const int gridCount = 6;
+  s.setGridCount(gridCount);     // Number of Multigrid levels to use
   s.downRelaxations = 1; // Number of Relaxations before restriction
   s.upRelaxations = 1;   // Number of Relaxations after prolongation
 
   // Allocating Grids -- Is there a better way to allocate these grids?
   auto *g = (GridLevel *)calloc(sizeof(GridLevel), s.gridCount);
 
-  for (int i = 0; i < s.gridCount; i++) {
+  for (int i = 0; i < gridCount; i++) {
     g[i].N = pow(2, s.N0 - i) + 1;
     g[i].h = 1.0 / (g[i].N - 1);
   }
 
-  for (int i = 0; i < s.gridCount; i++) {
+  for (int i = 0; i < gridCount; i++) {
     g[i].U = (double **)calloc(sizeof(double *), g[i].N);
     for (int j = 0; j < g[i].N; j++) {
       g[i].U[j] = (double *)calloc(sizeof(double), g[i].N);
     }
   }
 
-  for (int i = 0; i < s.gridCount; i++) {
+  for (int i = 0; i < gridCount; i++) {
     g[i].Un = (double **)calloc(sizeof(double *), g[i].N);
     for (int j = 0; j < g[i].N; j++) {
       g[i].Un[j] = (double *)calloc(sizeof(double), g[i].N);
     }
   }
 
-  for (int i = 0; i < s.gridCount; i++) {
+  for (int i = 0; i < gridCount; i++) {
     g[i].Res = (double **)calloc(sizeof(double *), g[i].N);
     for (int j = 0; j < g[i].N; j++) {
       g[i].Res[j] = (double *)calloc(sizeof(double), g[i].N);
     }
   }
 
-  for (int i = 0; i < s.gridCount; i++) {
+  for (int i = 0; i < gridCount; i++) {
     g[i].f = (double **)calloc(sizeof(double *), g[i].N);
     for (int j = 0; j < g[i].N; j++) {
       g[i].f[j] = (double *)calloc(sizeof(double), g[i].N);
@@ -90,6 +91,7 @@ void heat2DSolver(Heat2DSetup &s) {
 
   // Saving solution before returning
   for (int i = 0; i < g[0].N; i++)
+#pragma ivdep
     for (int j = 0; j < g[0].N; j++)
       s.saveSolution(i, j, g[0].U[i][j]);
 }
@@ -101,6 +103,7 @@ void applyJacobi(GridLevel *g, int l, int relaxations) {
     auto g_l_h_squared = g[l].h * g[l].h;
 
     for (int i = 1; i < g[l].N - 1; i++)
+#pragma ivdep
       for (int j = 1; j < g[l].N - 1; j++) // Perform a Jacobi Iteration
         g[l].U[i][j] =
             (g[l].Un[i - 1][j] + g[l].Un[i + 1][j] + g[l].Un[i][j - 1] +
@@ -113,6 +116,7 @@ void calculateResidual(GridLevel *g, int l) {
   auto inv_g_l_h_squared = 1. / (g[l].h * g[l].h);
 
   for (int i = 1; i < g[l].N - 1; i++)
+#pragma ivdep
     for (int j = 1; j < g[l].N - 1; j++)
       g[l].Res[i][j] = g[l].f[i][j] +
                        (g[l].U[i - 1][j] + g[l].U[i + 1][j] - 4 * g[l].U[i][j] +
@@ -135,6 +139,7 @@ double calculateL2Norm(GridLevel *g, int l) {
 
 void applyRestriction(GridLevel *g, int l) {
   for (int i = 1; i < g[l].N - 1; i++) {
+#pragma ivdep
     for (int j = 1; j < g[l].N - 1; j++) {
       g[l].f[i][j] = (g[l - 1].Res[2 * i - 1][2 * j - 1] +
                       g[l - 1].Res[2 * i - 1][2 * j + 1] +
@@ -153,18 +158,22 @@ void applyRestriction(GridLevel *g, int l) {
 
 void applyProlongation(GridLevel *g, int l) {
   for (int i = 1; i < g[l].N - 1; i++)
+#pragma ivdep
     for (int j = 1; j < g[l].N - 1; j++)
       g[l - 1].Un[2 * i][2 * j] = g[l].U[i][j];
 
   for (int i = 1; i < g[l].N; i++)
+#pragma ivdep
     for (int j = 1; j < g[l].N - 1; j++)
       g[l - 1].Un[2 * i - 1][2 * j] = (g[l].U[i - 1][j] + g[l].U[i][j]) * 0.5;
 
   for (int i = 1; i < g[l].N - 1; i++)
+#pragma ivdep
     for (int j = 1; j < g[l].N; j++)
       g[l - 1].Un[2 * i][2 * j - 1] = (g[l].U[i][j - 1] + g[l].U[i][j]) * 0.5;
 
   for (int i = 1; i < g[l].N; i++)
+#pragma ivdep
     for (int j = 1; j < g[l].N; j++)
       g[l - 1].Un[2 * i - 1][2 * j - 1] =
           (g[l].U[i - 1][j - 1] + g[l].U[i - 1][j] + g[l].U[i][j - 1] +
@@ -172,6 +181,7 @@ void applyProlongation(GridLevel *g, int l) {
           0.25;
 
   for (int i = 0; i < g[l - 1].N; i++)
+#pragma ivdep
     for (int j = 0; j < g[l - 1].N; j++)
       g[l - 1].U[i][j] += g[l - 1].Un[i][j];
 }

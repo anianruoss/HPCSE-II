@@ -1,6 +1,6 @@
-CFLAGS = -O2
+CFLAGS = -O3 -D NOALIAS -D NOFUNCCALL -qopt-report=3 -qopt-report-phase=vec
 #CFLAGS = -O0 -g
-LFLAGS = 
+LFLAGS =
 
 BINARIES = heat2d
 
@@ -9,6 +9,7 @@ BINARIES = heat2d
 all: $(BINARIES)
 
 heat2d: auxiliar/auxiliar.o heat2d.o
+
 	$(CC) $(CFLAGS) $(LFLAGS) -o $@ $^
 
 auxiliar/auxiliar.o:
