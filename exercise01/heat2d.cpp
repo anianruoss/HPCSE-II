@@ -16,7 +16,7 @@ public:
 
 void heat2DSolver(Heat2DSetup &s) {
   // Multigrid parameters -- Find the best configuration!
-  s.setGridCount(1);     // Number of Multigrid levels to use
+  s.setGridCount(6);     // Number of Multigrid levels to use
   s.downRelaxations = 1; // Number of Relaxations before restriction
   s.upRelaxations = 1;   // Number of Relaxations after prolongation
 
@@ -40,12 +40,12 @@ void heat2DSolver(Heat2DSetup &s) {
   }
 
   // Setting up problem.
-  for (int i = 0; i < s.N; i++)
-    for (int j = 0; j < s.N; j++)
+  for (int i = 0; i < s.N; i++) {
+    for (int j = 0; j < s.N; j++) {
       g[0].U[i][j] = s.getInitial(i, j);
-  for (int i = 0; i < s.N; i++)
-    for (int j = 0; j < s.N; j++)
       g[0].f[i][j] = s.getRHS(i, j);
+    }
+  }
 
   while (s.L2NormDiff > s.tolerance) // Multigrid solver start
   {
@@ -78,14 +78,14 @@ void heat2DSolver(Heat2DSetup &s) {
 
 void applyJacobi(GridLevel *g, int l, int relaxations) {
   for (int r = 0; r < relaxations; r++) {
-    for (int j = 0; j < g[l].N;
-         j++) // Update Un <- U0; Is this really necessary? Could we use some
-              // pointer magic here?
-      for (int i = 0; i < g[l].N; i++)
+    // Update Un <- U0; Is this really necessary? Could we use some pointer
+    // magic here?
+    for (int i = 0; i < g[l].N; i++)
+      for (int j = 0; j < g[l].N; j++)
         g[l].Un[i][j] = g[l].U[i][j];
 
-    for (int j = 1; j < g[l].N - 1; j++) // Perform a Jacobi Iteration
-      for (int i = 1; i < g[l].N - 1; i++)
+    for (int i = 1; i < g[l].N - 1; i++)
+      for (int j = 1; j < g[l].N - 1; j++) // Perform a Jacobi Iteration
         g[l].U[i][j] = (g[l].Un[i - 1][j] + g[l].Un[i + 1][j] +
                         g[l].Un[i][j - 1] + g[l].Un[i][j + 1]) /
                            4 +
@@ -94,8 +94,8 @@ void applyJacobi(GridLevel *g, int l, int relaxations) {
 }
 
 void calculateResidual(GridLevel *g, int l) {
-  for (int j = 1; j < g[l].N - 1; j++)
-    for (int i = 1; i < g[l].N - 1; i++)
+  for (int i = 1; i < g[l].N - 1; i++)
+    for (int j = 1; j < g[l].N - 1; j++)
       g[l].Res[i][j] = g[l].f[i][j] +
                        (g[l].U[i - 1][j] + g[l].U[i + 1][j] - 4 * g[l].U[i][j] +
                         g[l].U[i][j - 1] + g[l].U[i][j + 1]) /
@@ -104,20 +104,20 @@ void calculateResidual(GridLevel *g, int l) {
 
 double calculateL2Norm(GridLevel *g, int l) {
   double tmp = 0.0;
-  for (int j = 0; j < g[l].N; j++)
-    for (int i = 0; i < g[l].N; i++)
-      g[l].Res[i][j] = g[l].Res[i][j] * g[l].Res[i][j];
 
-  for (int j = 0; j < g[l].N; j++)
-    for (int i = 0; i < g[l].N; i++)
+  for (int i = 0; i < g[l].N; i++) {
+    for (int j = 0; j < g[l].N; j++) {
+      g[l].Res[i][j] = g[l].Res[i][j] * g[l].Res[i][j];
       tmp += g[l].Res[i][j];
+    }
+  }
 
   return sqrt(tmp);
 }
 
 void applyRestriction(GridLevel *g, int l) {
-  for (int j = 1; j < g[l].N - 1; j++)
-    for (int i = 1; i < g[l].N - 1; i++)
+  for (int i = 1; i < g[l].N - 1; i++) {
+    for (int j = 1; j < g[l].N - 1; j++) {
       g[l].f[i][j] = (1.0 * (g[l - 1].Res[2 * i - 1][2 * j - 1] +
                              g[l - 1].Res[2 * i - 1][2 * j + 1] +
                              g[l - 1].Res[2 * i + 1][2 * j - 1] +
@@ -128,33 +128,32 @@ void applyRestriction(GridLevel *g, int l) {
                              g[l - 1].Res[2 * i][2 * j + 1]) +
                       4.0 * (g[l - 1].Res[2 * i][2 * j])) /
                      16;
-
-  for (int j = 0; j < g[l].N; j++)
-    for (int i = 0; i < g[l].N; i++)
       g[l].U[i][j] = 0;
+    }
+  }
 }
 
 void applyProlongation(GridLevel *g, int l) {
-  for (int j = 1; j < g[l].N - 1; j++)
-    for (int i = 1; i < g[l].N - 1; i++)
+  for (int i = 1; i < g[l].N - 1; i++)
+    for (int j = 1; j < g[l].N - 1; j++)
       g[l - 1].Un[2 * i][2 * j] = g[l].U[i][j];
 
-  for (int j = 1; j < g[l].N - 1; j++)
-    for (int i = 1; i < g[l].N; i++)
+  for (int i = 1; i < g[l].N; i++)
+    for (int j = 1; j < g[l].N - 1; j++)
       g[l - 1].Un[2 * i - 1][2 * j] = (g[l].U[i - 1][j] + g[l].U[i][j]) / 2;
 
-  for (int j = 1; j < g[l].N; j++)
-    for (int i = 1; i < g[l].N - 1; i++)
+  for (int i = 1; i < g[l].N - 1; i++)
+    for (int j = 1; j < g[l].N; j++)
       g[l - 1].Un[2 * i][2 * j - 1] = (g[l].U[i][j - 1] + g[l].U[i][j]) / 2;
 
-  for (int j = 1; j < g[l].N; j++)
-    for (int i = 1; i < g[l].N; i++)
+  for (int i = 1; i < g[l].N; i++)
+    for (int j = 1; j < g[l].N; j++)
       g[l - 1].Un[2 * i - 1][2 * j - 1] =
           (g[l].U[i - 1][j - 1] + g[l].U[i - 1][j] + g[l].U[i][j - 1] +
            g[l].U[i][j]) /
           4;
 
-  for (int j = 0; j < g[l - 1].N; j++)
-    for (int i = 0; i < g[l - 1].N; i++)
+  for (int i = 0; i < g[l - 1].N; i++)
+    for (int j = 0; j < g[l - 1].N; j++)
       g[l - 1].U[i][j] += g[l - 1].Un[i][j];
 }
