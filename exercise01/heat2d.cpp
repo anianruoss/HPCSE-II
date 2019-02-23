@@ -1,4 +1,5 @@
 #include "auxiliar/auxiliar.hpp"
+#include <algorithm>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -95,7 +96,7 @@ void heat2DSolver(Heat2DSetup &s) {
 
 void applyJacobi(GridLevel *g, int l, int relaxations) {
   for (int r = 0; r < relaxations; r++) {
-    g[l].Un = g[l].U;
+    std::swap(g[l].Un, g[l].U);
 
     auto g_l_h_squared = g[l].h * g[l].h;
 
