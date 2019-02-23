@@ -1,15 +1,15 @@
 #include "auxiliar/auxiliar.hpp"
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
 
 class GridLevel {
 public:
-  size_t N;   // Number of points per dimension in the grid level
-  double h;   // DeltaX = DeltaY, the distance between points in the discretized
-              // [0,1]x[0,1] domain
-  double **f; // Right hand side (external heat sources)
-  double **U; // Main grid for Jacobi
+  size_t N;     // Number of points per dimension in the grid level
+  double h;     // DeltaX = DeltaY, the distance between points in the
+                // discretized [0,1]x[0,1] domain
+  double **f;   // Right hand side (external heat sources)
+  double **U;   // Main grid for Jacobi
   double **Un;  // Previous' step grid
   double **Res; // Residual Grid
 };
@@ -21,7 +21,7 @@ void heat2DSolver(Heat2DSetup &s) {
   s.upRelaxations = 1;   // Number of Relaxations after prolongation
 
   // Allocating Grids -- Is there a better way to allocate these grids?
-  GridLevel *g = (GridLevel *)calloc(sizeof(GridLevel), s.gridCount);
+  auto *g = (GridLevel *)calloc(sizeof(GridLevel), s.gridCount);
   for (int i = 0; i < s.gridCount; i++) {
     g[i].N = pow(2, s.N0 - i) + 1;
     g[i].h = 1.0 / (g[i].N - 1);

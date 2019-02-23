@@ -8,7 +8,7 @@ BINARIES = heat2d
 .PHONY: all 
 all: $(BINARIES)
 
-heat2d: auxiliar heat2d.o
+heat2d: auxiliar/auxiliar.o heat2d.o
 	$(CC) $(CFLAGS) $(LFLAGS) -o $@ $^
 
 auxiliar/auxiliar.o:
