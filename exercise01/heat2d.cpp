@@ -27,14 +27,22 @@ void heat2DSolver(Heat2DSetup &s) {
     g[i].h = 1.0 / (g[i].N - 1);
 
     g[i].U = (double **)calloc(sizeof(double *), g[i].N);
-    g[i].Un = (double **)calloc(sizeof(double *), g[i].N);
-    g[i].Res = (double **)calloc(sizeof(double *), g[i].N);
-    g[i].f = (double **)calloc(sizeof(double *), g[i].N);
-
     for (int j = 0; j < g[i].N; j++) {
       g[i].U[j] = (double *)calloc(sizeof(double), g[i].N);
+    }
+
+    g[i].Un = (double **)calloc(sizeof(double *), g[i].N);
+    for (int j = 0; j < g[i].N; j++) {
       g[i].Un[j] = (double *)calloc(sizeof(double), g[i].N);
+    }
+
+    g[i].Res = (double **)calloc(sizeof(double *), g[i].N);
+    for (int j = 0; j < g[i].N; j++) {
       g[i].Res[j] = (double *)calloc(sizeof(double), g[i].N);
+    }
+
+    g[i].f = (double **)calloc(sizeof(double *), g[i].N);
+    for (int j = 0; j < g[i].N; j++) {
       g[i].f[j] = (double *)calloc(sizeof(double), g[i].N);
     }
   }
