@@ -93,3 +93,41 @@ Convergence Rate  : 9.996432e-07
 Running Time      : 41.526s
 Loading actual solution from file auxiliar/problem2.sol... 
 Verification Passed.
+Running problem from file auxiliar/problem2.in... 
+   Time (s)     Grid0    Grid1    Grid2    Grid3    Grid4    Grid5       Total  
+-------------|-------------------------------------------------------|---------
+Smoothing    | 36.323    7.027    1.311    0.277    0.073    0.023   |  45.035  
+Residual     |  4.239    0.868    0.164    0.040    0.012    0.006   |   5.329  
+Restriction  |  1.271    0.279    0.062    0.019    0.007    0.000   |   1.638  
+Prolongation |  4.253    0.726    0.142    0.035    0.013    0.000   |   5.168  
+L2Norm       |  0.806    0.000    0.000    0.000    0.000    0.000   |   0.806  
+-------------|-------------------------------------------------------|---------
+Total        | 46.892    8.900    1.678    0.371    0.105    0.029   |  57.976  
+-------------|-------------------------------------------------------|---------
+
+Fine grid elements: 257 x 257 (n = 8)
+V-Cycle Iterations: 14811
+Final L2 Residual : 2.217961e-03
+Convergence Rate  : 9.997330e-07
+Running Time      : 58.096s
+Loading actual solution from file auxiliar/problem2.sol... 
+Verification Passed.
+Running problem from file auxiliar/problem2.in... 
+   Time (s)     Grid0    Grid1    Grid2    Grid3    Grid4    Grid5       Total  
+-------------|-------------------------------------------------------|---------
+Smoothing    | 29.087    5.518    0.962    0.216    0.057    0.017   |  35.858  
+Residual     |  2.912    0.597    0.108    0.027    0.008    0.004   |   3.657  
+Restriction  |  0.873    0.193    0.041    0.013    0.005    0.000   |   1.124  
+Prolongation |  2.928    0.503    0.096    0.024    0.009    0.000   |   3.559  
+L2Norm       |  0.553    0.000    0.000    0.000    0.000    0.000   |   0.553  
+-------------|-------------------------------------------------------|---------
+Total        | 36.353    6.811    1.207    0.280    0.079    0.021   |  44.752  
+-------------|-------------------------------------------------------|---------
+
+Fine grid elements: 257 x 257 (n = 8)
+V-Cycle Iterations: 10130
+Final L2 Residual : 1.911848e-03
+Convergence Rate  : 9.993094e-07
+Running Time      : 44.835s
+Loading actual solution from file auxiliar/problem2.sol... 
+Verification Passed.
