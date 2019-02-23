@@ -1,0 +1,112 @@
+\documentclass[11pt]{article}
+
+
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{cleveref}
+\usepackage{enumerate}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{listings}
+
+\setlength\parindent{0pt}
+
+\begin{document}
+
+    \title{HPCSE II - Exercise 1}
+    \author{Anian Ruoss}
+    \maketitle
+
+    All experiments were run on a node obtained by running the following
+    command:
+    \begin{lstlisting}[language=bash, basicstyle=\footnotesize]
+bsub -n 24 -R fullnode -R "select[model=XeonE5_2680v3]" -Is bash
+    \end{lstlisting}
+
+    \subsection*{Task 4}
+    \label{subsec:Task4}
+    \begin{enumerate}[a)]
+        \item See the first row in Table~\ref{table:OptGridCount}.
+        \item The optimal number of grids is $6$ as illustrated
+        in Table~\ref{table:OptGridCount}.
+        \begin{table}[H]
+            \caption{Iterations and running times for different numbers of
+            grids for DownRelaxations $=1$ and UpRelaxations $=1$.}
+            \begin{center}
+                \input{./data/optimal_grid_count.tex}
+            \end{center}
+            \label{table:OptGridCount}
+        \end{table}
+        \item The optimal combination of up and down relaxations is
+        determined in a greedy way.
+        The optimal number of down relaxations in terms of running time is $3$
+        as illustrated in Table~\ref{table:OptDownRelax}.
+        Although, values of $5$ and $7$ produce less iterations, the time per
+        iteration is significantly higher.
+        \begin{table}[H]
+            \caption{Iterations and running times for different numbers of
+            down relaxations given GridCount $= 6$ and UpRelaxations $= 1$.}
+            \begin{center}
+                \input{./data/optimal_down_relaxations.tex}
+            \end{center}
+            \label{table:OptDownRelax}
+        \end{table}
+        The optimal number of up relaxations is $1$ as illustrated in
+        Table~\ref{table:OptUpRelax}.
+        \begin{table}[H]
+            \caption{Iterations and running times for different numbers of up
+            relaxations with GridCount $= 6$ and DownRelaxations $= 3$.}
+            \begin{center}
+                \input{./data/optimal_up_relaxations.tex}
+            \end{center}
+            \label{table:OptUpRelax}
+        \end{table}
+        \item The optimal configuration is given by GridCount $= 6$,
+        \mbox{DownRelaxations $= 3$}, and UpRelaxations $= 1$.
+        \item The solution reaches its equilibrium state faster on coarser
+        grids as every cell covers more area.
+        Fine grids ensure that the discretization error remains small.
+        \item TODO
+    \end{enumerate}
+
+    \subsection*{Task 5}
+    \label{subsec:Task5}
+
+    \begin{enumerate}[a)]
+        \item \textit{Loop Interchange} can be applied to a prevent bad
+        memory access patterns, i.e.\ swapping the $i$- and $j$-loops.
+        \textit{Loop Fusion} can be applied to prevent the overhead of a
+        for-loop, i.e.\ when two independent computations with the same
+        iteration space are merged into a single for-loop.
+        \item Every grid should be allocated in its entirety before moving
+        on to the next one as this prevents cache thrashing.
+        \item Omitted.
+    \end{enumerate}
+
+    \subsection*{Task 6}
+    \label{subsec:Task6}
+    \begin{enumerate}[a)]
+        \item \begin{itemize}
+                  \item Division operator replaced with multiplication of
+                  inverse.
+                  \item Multiplication by $1$ removed.
+                  \item $pow\left(x, 2\right)$ replaced with $x \cdot x$.
+                  \item Constants pre-computed and moved out of loops.
+                  \item Expressions simplified with associativity.
+                  \item Copy of array avoided by pointer swap.
+        \end{itemize}
+    \end{enumerate}
+
+    \subsection*{Task 7}
+    \label{subsec:Task7}
+    \begin{enumerate}[a)]
+        \item Most loops cannot be vectorized due to vector dependence.
+        \item This can be fixed by adding
+        \lstinline[language=c++, basicstyle=\footnotesize]{#pragma ivdep}
+        before the loop if the vectors are in fact independent.
+        \item Unaligned SIMD operations need to gather from different
+        locations, whereas aligned operations rely on the fact that the
+        relevant data is stored contiguously in memory.
+    \end{enumerate}
+
+\end{document}
