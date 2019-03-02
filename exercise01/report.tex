@@ -37,36 +37,56 @@ bsub -n 24 -R fullnode -R "select[model=XeonE5_2680v3]" -Is bash
             \end{center}
             \label{table:OptGridCount}
         \end{table}
-        \item The optimal combination of up and down relaxations is
+        \item The optimal combination of UpRelaxations and DownRelaxations is
         determined in a greedy way.
-        The optimal number of down relaxations in terms of running time is $3$
+        The optimal number of DownRelaxations in terms of running time is $3$
         as illustrated in Table~\ref{table:OptDownRelax}.
         Although, values of $5$ and $7$ produce less iterations, the time per
         iteration is significantly higher.
         \begin{table}[H]
             \caption{Iterations and running times for different numbers of
-            down relaxations given GridCount $= 6$ and UpRelaxations $= 1$.}
+            DownRelaxations given GridCount $= 6$ and UpRelaxations $= 1$.}
             \begin{center}
                 \input{./data/optimal_down_relaxations.tex}
             \end{center}
             \label{table:OptDownRelax}
         \end{table}
-        The optimal number of up relaxations is $1$ as illustrated in
+        The optimal number of UpRelaxations is $1$ as illustrated in
         Table~\ref{table:OptUpRelax}.
         \begin{table}[H]
-            \caption{Iterations and running times for different numbers of up
-            relaxations with GridCount $= 6$ and DownRelaxations $= 3$.}
+            \caption{Iterations and running times for different numbers of
+            UpRelaxations with GridCount $= 6$ and DownRelaxations $= 3$.}
             \begin{center}
                 \input{./data/optimal_up_relaxations.tex}
             \end{center}
             \label{table:OptUpRelax}
         \end{table}
-        \item The optimal configuration is given by GridCount $= 6$,
-        \mbox{DownRelaxations $= 3$}, and UpRelaxations $= 1$.
-        \item The solution reaches its equilibrium state faster on coarser
-        grids as every cell covers more area.
-        Fine grids ensure that the discretization error remains small.
-        \item TODO
+        \item The optimal configuration with respect to the results from
+        tables~\ref{table:OptGridCount},~\ref{table:OptDownRelax},
+        and~\ref{table:OptUpRelax} is given by GridCount $= 6$,
+        DownRelaxations $= 3$, and UpRelaxations $= 1$.
+        To find the global minimum one would have to run a grid search on all
+        three parameters.
+        However, since the exercise asked for a greedy approach and since
+        the local minimum performed fairly well, the grid search was omitted.
+        \item The solution reaches its equilibrium state for low frequencies
+        faster on coarser grids as every cell covers more area (it is also
+        cheaper to compute a full pass on coarse grids).
+        Larger frequencies can only be resolved on finer grids and thus
+        the solution is alternatingly computed on finer and coarser grids to
+        increase convergence speed while maintaining a small discretization
+        error.
+        \item Using more DownRelaxations increases the number of iterations
+        in an alternating manner (the TA could not provide an explanation
+        for this phenomenon during the exercise class).
+        Furthermore, the running time decreases slightly from $1$ to $3$
+        because at every grid level the solution can converge to its
+        equilibrium state before passing on its values to the next grid.
+        However, using more relaxation steps doesn't lead to a better
+        convergence as it has already converged on the grid with fewer
+        relaxations and thus just increases the time spent on every grid.
+        The number of UpRelaxations doesn't seem to affect the iterations at
+        all and just increases the time spent at every grid.
     \end{enumerate}
 
     \subsection*{Task 5}
@@ -75,12 +95,42 @@ bsub -n 24 -R fullnode -R "select[model=XeonE5_2680v3]" -Is bash
     \begin{enumerate}[a)]
         \item \textit{Loop Interchange} can be applied to a prevent bad
         memory access patterns, i.e.\ swapping the $i$- and $j$-loops.
-        \textit{Loop Fusion} can be applied to prevent the overhead of a
-        for-loop, i.e.\ when two independent computations with the same
-        iteration space are merged into a single for-loop.
+        \textit{Loop Fusion} can be applied to increase data locality, i.e.\
+        performing the computations of two subsequent for-loops that rely on
+        the same data in a single for-loop instead to reduce cache misses.
         \item Every grid should be allocated in its entirety before moving
         on to the next one as this prevents cache thrashing.
-        \item Omitted.
+        This is an example where \textit{Loop Fusion} should not be
+        applied as the different for-loops operate on different data.
+        \item As smoothing on the $0$-th grid takes the most time, the
+        maximum possible speedup can be obtained by optimizing the
+        \textbf{applyJacobi} method.
+        Thus, to determine the effect of \textit{Loop Blocking}, the
+        for-loops in \textbf{applyJacobi} can be replaced with the blocked
+        for-loops:
+\begin{lstlisting}[language=c++, basicstyle=\tiny]
+for (int ii = 1; ii < g[l].N - 1; ii += B) {
+  for (int jj = 1; jj < g[l].N - 1; jj += B) {
+    for (int i = ii; i < std::min(ii + B, (int)g[l].N - 1); ++i) {
+      for (int j = jj; j < std::min(jj + B, (int)g[l].N - 1); ++j) {
+        g[l].U[i][j] =
+            (g[l].Un[i - 1][j] + g[l].Un[i + 1][j] + g[l].Un[i][j - 1] +
+             g[l].Un[i][j + 1] + g[l].f[i][j] * g_l_h_squared) *
+            0.25;
+      }
+    }
+  }
+}
+\end{lstlisting}
+        However, even when trying different block sizes
+        $B \in \left\{ 8, 16, 32, 64, 128 \right\}$ (larger block
+        sizes are not applicable due to the size of the largest grid), the
+        running time does not decrease.
+        In fact, since the grid sizes are so small that enough data can fit
+        into the cache, the overhead induced by the two additional for-loops
+        causes the program to run slower.
+        For this reason, \textit{Loop Blocking} was not used for the final
+        implementation.
     \end{enumerate}
 
     \subsection*{Task 6}
@@ -99,19 +149,44 @@ bsub -n 24 -R fullnode -R "select[model=XeonE5_2680v3]" -Is bash
 
     \subsection*{Task 7}
     \label{subsec:Task7}
+    To generate the optimization reports, the following line in the Makefile
+    has to be changed to:
+    \begin{lstlisting}[language=bash, basicstyle=\tiny]
+CFLAGS = -O3 -D NOALIAS -D NOFUNCCALL -qopt-report=3 -qopt-report-phase=vec
+    \end{lstlisting}
+
     \begin{enumerate}[a)]
         \item Most loops cannot be vectorized due to vector dependence.
-        \item This can be fixed by adding
+        This means that the compiler cannot know if the data accessed in one
+        iteration are also changed in another iteration (which would case a
+        race condition if vectorized).
+        \item This problem can be fixed by adding
         \lstinline[language=c++, basicstyle=\footnotesize]{#pragma ivdep}
-        before the loop if the vectors are in fact independent.
-        \item Unaligned SIMD operations need to gather from different
-        locations, whereas aligned operations rely on the fact that the
-        relevant data is stored contiguously in memory.
+        in front of the loop if the vectors are in fact independent (which
+        they are as the results are computed from and stored into different
+        vectors).
+        \item SIMD operations start working at the beginning of a block of
+        memory and thus if the arrays are not aligned with the block starts
+        the operations need to gather data from different blocks which is
+        very inefficient.
+        During the exercise class the following grids allocation was
+        recommended:
+\begin{lstlisting}[language=c++, basicstyle=\scriptsize]
+g[i].U = (double**) _mm_malloc (sizeof(double*) * g[i].N, 16);
+for (int j = 0; j < g[i].N; j++) {
+    g[i].U[j] = (double*) _mm_malloc (sizeof(double) * g[i].N, 16);
+}
+\end{lstlisting}
+        However, even in combination with
+        \lstinline[language=c++, basicstyle=\footnotesize]{#pragma vector aligned}
+        this allocation slowed down the implementation (probably because it
+        only aligns pointers and not the underlying data).
+        Hence, the original allocation was used for the final implementation.
     \end{enumerate}
 
     \begin{table}[H]
         \caption{Iterations and running times for the three problems after
-        all optimizations have been performed.}
+        all (beneficial) optimizations have been performed.}
         \begin{center}
             \input{./data/optimal_problem.tex}
         \end{center}
