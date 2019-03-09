@@ -34,5 +34,8 @@
 # JetBrains files
 .idea/
 
-# build directory
+# Build directory
 build
+
+# Virtual environment
+venv
