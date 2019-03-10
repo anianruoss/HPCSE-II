@@ -14,26 +14,20 @@
     \subsection*{Task 4}
 
     \begin{figure}[H]
-        \begin{subfigure}{.5\textwidth}
-            \begin{center}
-                \includegraphics[width=\textwidth]{plots/hist.eps}
-                \caption{Unnormalized}
-            \end{center}
-        \end{subfigure}
-        \begin{subfigure}{.5\textwidth}
-            \begin{center}
-                \includegraphics[width=\textwidth]{plots/hist_normalized.eps}
-                \caption{Normalized}
-            \end{center}
-        \end{subfigure}
-        \caption{Histogram of data with 100 bins.}
-    \end{figure}
-
-    \begin{figure}[H]
         \begin{center}
-            \includegraphics[width=.5\textwidth]{plots/hist_distributions.eps}
+            \includegraphics[width=.75\textwidth]{plots/hist_distributions.eps}
         \end{center}
-        \caption{Normalized histogram and distributions from MLE parameters.}
+        \caption{Normalized histogram with 100 bins and distributions from MLE
+        parameters
+        $\left(
+        \hat{\lambda}_{\text{MLE}} = \hat{\mu}_{\text{MLE}} \approx 3.14
+        \text{ and } \hat{\sigma}_{\text{MLE}} \approx 3.17 \right)$.
+        The Poisson distribution clearly provides a better fit than the
+        Gaussian.
+        This agrees with the fact that maximum log-likelihood for the
+        Poisson distribution is larger than the Gaussian's.
+        As hypothesized, the data does not reflect the symmetry imposed by a
+        Gaussian distribution.}
     \end{figure}
 
 \end{document}
