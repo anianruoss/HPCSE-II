@@ -39,3 +39,8 @@ build
 
 # Virtual environment
 venv
+
+# LaTeX files
+*.log
+*.aux
+*eps-converted-to.pdf

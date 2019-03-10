@@ -113,15 +113,16 @@ gaussian_density = list(
         data_range
     )
 )
-plt.plot(data_range, gaussian_density, c='k', label='Gaussian')
+plt.plot(data_range, gaussian_density, c='k', label='Gaussian', linewidth=3)
 
-# plot beta distribution
+# plot beta distribution (out of curiosity)
 alpha, beta, loc, scale = stats.beta.fit(data)
 plt.plot(
     data_range,
     stats.beta.pdf(data_range, alpha, beta, loc=loc, scale=scale),
     c='r',
-    label='Beta'
+    label='Beta',
+    linewidth=3
 )
 
 plt.legend()
