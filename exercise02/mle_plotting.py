@@ -34,11 +34,15 @@ def hist(x_array, n_bins, normalize=True):
 num_bins = 100
 counts, bins = hist(data, num_bins, normalize=False)
 plt.bar(bins, counts, width=0.5, align='edge', color='gray')
+plt.xlabel('x')
+plt.ylabel(r'$P\left(x\right)$')
 plt.savefig(path.join(working_dir, 'plots/hist.eps'), bbox_inches='tight')
 plt.close()
 
 counts, bins = hist(data, num_bins, normalize=True)
 plt.bar(bins, counts, width=0.5, align='edge', color='gray')
+plt.xlabel('x')
+plt.ylabel(r'$P\left(x\right)$')
 plt.savefig(
     path.join(working_dir, 'plots/hist_normalized.eps'), bbox_inches='tight'
 )
@@ -127,6 +131,8 @@ poisson_densities = list(
 )
 plt.plot(data_range, poisson_densities, c='r', label='Poisson', linewidth=3)
 
+plt.xlabel('x')
+plt.ylabel(r'$P\left(x\right)$')
 plt.legend()
 plt.savefig(
     path.join(working_dir, 'plots/hist_distributions.eps'), bbox_inches='tight'
