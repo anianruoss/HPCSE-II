@@ -14,7 +14,7 @@ def cauchy_pdf(x, x0_, gamma_):
 
 def laplace_approximation(x, x0_, gamma_):
     gamma_squared = gamma_ ** 2
-    return np.exp(- (x - x0_) ** 2 / gamma_squared) / (math.pi * gamma_squared)
+    return np.exp(- (x - x0_) ** 2 / gamma_squared) / (math.pi * gamma_)
 
 
 x0 = -2.
