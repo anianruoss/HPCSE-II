@@ -15,7 +15,7 @@ except FileNotFoundError:
     data = np.load(path.join(working_dir, 'task4.npy'))
 
 
-def hist(x_array, n_bins, normalize=True):
+def hist(x_array, n_bins, continuous=True, normalize=True):
     min_val = x_array.min()
     max_val = x_array.max()
     count = np.zeros(int(n_bins))
@@ -28,18 +28,21 @@ def hist(x_array, n_bins, normalize=True):
     if normalize:
         count /= x_array.shape[0]
 
+        if continuous:
+            count /= ((max_val - min_val) / n_bins)
+
     return count, np.linspace(min_val, max_val, num=n_bins)
 
 
 num_bins = 100
-counts, bins = hist(data, num_bins, normalize=False)
+counts, bins = hist(data, num_bins, continuous=False, normalize=False)
 plt.bar(bins, counts, width=0.5, align='edge', color='gray')
 plt.xlabel('x')
 plt.ylabel(r'$P\left(x\right)$')
 plt.savefig(path.join(working_dir, 'plots/hist.eps'), bbox_inches='tight')
 plt.close()
 
-counts, bins = hist(data, num_bins, normalize=True)
+counts, bins = hist(data, num_bins, continuous=False, normalize=True)
 plt.bar(bins, counts, width=0.5, align='edge', color='gray')
 plt.xlabel('x')
 plt.ylabel(r'$P\left(x\right)$')
