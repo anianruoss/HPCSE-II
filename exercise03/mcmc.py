@@ -1,93 +1,172 @@
-#!/usr/bin/env python
-# # -*- coding: utf-8 -*-
-"""Created by: Vlachas Pantelis, CSE-lab, ETH Zurich
-"""
-import numpy as np
-from scipy.stats import gaussian_kde
-import matplotlib
+import math
+from os import makedirs, path
+
 import matplotlib.pyplot as plt
+import numpy as np
+import scipy.stats as ss
 
-# class defining the posterior distribution for the coin flip example
-class target_coin_flip():
-    def __init__(self, NN, NH):
-        self.NN = NN # number of tosses
-        self.NH = NH # number of heads
-    def evaluate(self, H):
-        # samples from the posterior
-        pH=1 if (H>=0 and H<=1) else 0.0
-        return np.power(H,self.NH)*np.power(1-H,self.NN-self.NH)*pH
-
-#class defining the logarithmic representation of the posterior
-class target_log_coin_flip():
-    # TODO : use the "target_coin_flip" class as a starting point
-    #        and edit appropriately to convert to logarithmic scale
+np.random.seed(0)
 
 
-def MCMC(target, starting_sample, num_iters=1e6, burnin=1e4):
-    print("Running MCMC")
-    # Markov Chain Monte Carlo (MCMC) - Metropolis
-    current_sample = starting_sample
+class CoinFlip:
+    """
+    Defines the posterior distribution for random coin flips
+    """
+
+    def __init__(self, num_tosses, num_heads):
+        self.num_tosses = num_tosses
+        self.num_heads = num_heads
+
+    def eval(self, prob_head):
+        uniform_prior = 1. if (0 <= prob_head <= 1) else 0.
+        binomial_likelihood = (
+                (prob_head ** self.num_heads) *
+                ((1. - prob_head) ** (self.num_tosses - self.num_heads))
+        )
+
+        return binomial_likelihood * uniform_prior
+
+
+class LogCoinFlip:
+    """
+    Defines the logarithmic posterior distribution for random coin flips
+    """
+
+    def __init__(self, num_tosses, num_heads):
+        self.num_tosses = num_tosses
+        self.num_heads = num_heads
+
+    def eval(self, prob_head):
+        log_uniform_prior = 0. if (0. <= prob_head <= 1) else math.log(0)
+        log_binomial_likelihood = (
+                self.num_heads * math.log(prob_head) +
+                (self.num_tosses - self.num_heads) * math.log(1. - prob_head)
+        )
+
+        return log_binomial_likelihood + log_uniform_prior
+
+
+def mcmc(target, start, iterations=10 ** 6, burn_in=10 ** 4):
+    """
+    Markov Chain Monte Carlo (MCMC) - Metropolis Hastings
+    """
+
+    if iterations <= burn_in:
+        raise ValueError(
+            f'Number of samples {iterations} smaller than burn-in {burn_in}'
+        )
+
+    current_sample = start
+
     # proposal distribution is a Gaussian with mean 0.0 and std 0.1
-    proposal_mean = 0.0
-    proposal_sigma = 0.1
-    samples = []
-    samples.append(starting_sample)
-    for iter_ in range(int(num_iters)):
-        # GENERATION BASED ON PROPOSAL
-        next_sample_candidate = current_sample + proposal_mean + np.random.randn()*proposal_sigma
-        # ACCEPTANCE PROBABILITY - Metropolis
-        acceptance_prob = np.min([1.0, target.evaluate(next_sample_candidate)/(target.evaluate(current_sample))])
-        # ACCEPT OR REJECT with uniform probability
-        temp = np.random.rand()
+    proposal_dist = ss.norm(loc=0.0, scale=0.1)
+    uniform_dist = ss.uniform()
+
+    samples = np.empty(iterations + 1)
+    samples[0] = start
+
+    for itr in range(iterations):
+        # sample candidate from proposal distribution
+        sample_candidate = current_sample + proposal_dist.rvs()
+
+        # compute metropolis acceptance probability
+        acceptance_prob = min(
+            1.0,
+            target.eval(sample_candidate) / target.eval(current_sample)
+        )
+
+        # accept or reject with uniform probability
+        temp = uniform_dist.rvs()
+
+        # check whether to accept the candidate
         if temp <= acceptance_prob:
-            # ACCEPTING THE CANDIDATE SAMPLE
-            samples.append(next_sample_candidate)
-            current_sample = next_sample_candidate
-        else:
-            samples.append(current_sample)
-    if len(samples)>burnin:
-        # keep only samples after burn-in iterations
-        samples=samples[int(burnin):]
-    else:
-        raise ValueError("Number of samples {:} smaller than burnin period {:}.".format(len(samples), burnin))
-    return samples
+            current_sample = sample_candidate
+
+        samples[itr + 1] = current_sample
+
+    # keep only samples after burn-in iterations
+    return samples[burn_in:]
 
 
-def MCMCLOG(logtarget, starting_sample, num_iters=1e6, burnin=1e4):
-    print("Running MCMCMHLOG")
-    # Markov Chain Monte Carlo (MCMC) - Metropolis Hastings 
-    # TODO: start from the "MCMC" function above and edit whenever
-    #       necessary to convert to logarithmic scale
+def mcmc_log(log_target, start, iterations=10 ** 6, burn_in=10 ** 4):
+    """
+    Markov Chain Monte Carlo (MCMC) - Metropolis Hastings
+    """
+
+    if iterations <= burn_in:
+        raise ValueError(
+            f'Number of samples {iterations} smaller than burn-in {burn_in}'
+        )
+
+    curr_sample = start
+
+    # proposal distribution is a Gaussian with mean 0.0 and std 0.1
+    proposal_dist = ss.norm(loc=0.0, scale=0.1)
+    uniform_dist = ss.uniform()
+
+    samples = np.empty(iterations + 1)
+    samples[0] = start
+
+    for itr in range(iterations):
+        # sample candidate from proposal distribution
+        sample_candidate = curr_sample + proposal_dist.rvs()
+
+        # compute log of metropolis acceptance probability
+        log_acceptance_prob = min(
+            0.,
+            log_target.eval(sample_candidate) - log_target.eval(curr_sample)
+        )
+
+        # accept or reject with uniform probability
+        temp = uniform_dist.rvs()
+
+        # check whether to accept the candidate
+        if math.log(temp) <= log_acceptance_prob:
+            curr_sample = sample_candidate
+
+        samples[itr + 1] = curr_sample
+
+    # keep only samples after burn-in iterations
+    return samples[burn_in:]
 
 
-if __name__ == "__main__":
+burn_in_iterations = 10 ** 2
+num_iterations = 10 ** 5
+starting_sample = 0.5
 
-    #IN NN TOSSES, NH TIMES HEAD (NN>=NH)
-    NN = 300 # NN = 300 / 3000 tosses
-    NH = 150 # NH = 150 / 1500 heads
-    burnin = 1e2 # number of burn-in iterations
-    num_iters = 1e5 # number of total MCMC iterations
-    starting_sample = 0.5 # starting point for MCMC algorithm
-    
-    target = target_coin_flip(NN,NH)
-    samples_mcmc = MCMC(target, starting_sample, num_iters, burnin)
-    # plot histogram with samples drawn from posterior distribution with the MCMC algorithm
-    plt.hist(samples_mcmc, normed=True, facecolor='g', alpha=0.6, label="MCMC") # if you're using python>3, use density=True instead of normed=True
-    plt.xlim([0,1])
-    plt.legend()
-     # plt.show()
+fig, ax = plt.subplots(2, 2, sharex='all', sharey='col')
 
-    target = target_log_coin_flip(NN,NH)
-    samples_mcmclog = MCMCLOG(target, starting_sample, num_iters, burnin)
-    plt.hist(samples_mcmclog, normed=True, facecolor='b', alpha=0.6, label="MCMC-LOG")
-    plt.xlim([0,1])
-    plt.legend()
-    plt.show()
+for i, (tosses, heads) in enumerate([(300, 150), (3000, 1500)]):
+    samples_mcmc = mcmc(
+        CoinFlip(tosses, heads),
+        starting_sample,
+        num_iterations,
+        burn_in_iterations
+    )
 
+    samples_mcmc_log = mcmc_log(
+        LogCoinFlip(tosses, heads),
+        starting_sample,
+        num_iterations,
+        burn_in_iterations
+    )
 
+    ax[0, i].hist(
+        samples_mcmc, density=True, facecolor='g', alpha=0.6, label='MCMC'
+    )
+    ax[0, i].set_title(f'[{heads} heads / {tosses} tosses]')
+    ax[0, i].legend()
 
+    ax[1, i].hist(
+        samples_mcmc_log, density=True, facecolor='b', alpha=0.6,
+        label='MCMC-LOG'
+    )
+    ax[1, i].set_xlim([0, 1])
+    ax[1, i].legend()
 
+makedirs('plots', exist_ok=True)
 
-
-
-
+plt.savefig(
+    path.join(path.dirname(__file__), 'plots/coin_toss.eps'),
+    bbox_inches='tight'
+)
