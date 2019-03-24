@@ -26,10 +26,16 @@ x = truncated_exponential.rvs(size=n)
 f = np.array(list(map(standard_normal.pdf, x)))
 g = np.array(list(map(truncated_exponential.pdf, x)))
 
-estimator_2 = (x * f / g)[4.5 < x].sum() / n
+estimator_2 = (f / g)[4.5 < x].sum() / n
 
 end_2 = time.perf_counter()
 
-print('Estimator (3): ', estimator_1, f'[{end_1 - start_1}s]')
-print('Estimator (4): ', estimator_2, f'[{end_2 - start_2}s]')
-print('Exact solution:', 1. - standard_normal.cdf(4.5))
+print(
+    'Estimator (3):   {:3.10f} [{:2.5f}s]'.format(estimator_1, end_1 - start_1)
+)
+print(
+    'Estimator (4):   {:3.10f} [{:2.5f}s]'.format(estimator_2, end_2 - start_2)
+)
+print(
+    'Exact solution:  {:3.10f}'.format(1. - standard_normal.cdf(4.5))
+)
