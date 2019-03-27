@@ -37,13 +37,17 @@ class LogCoinFlip:
         self.num_heads = num_heads
 
     def eval(self, prob_head):
-        log_uniform_prior = 0. if (0. <= prob_head <= 1) else math.log(0)
-        log_binomial_likelihood = (
-                self.num_heads * math.log(prob_head) +
-                (self.num_tosses - self.num_heads) * math.log(1. - prob_head)
-        )
+        if not 0. <= prob_head <= 1.:
+            return -np.inf
+        else:
+            log_uniform_prior = 0.
+            log_binomial_likelihood = (
+                    self.num_heads * math.log(prob_head) +
+                    (self.num_tosses - self.num_heads) *
+                    math.log(1. - prob_head)
+            )
 
-        return log_binomial_likelihood + log_uniform_prior
+            return log_binomial_likelihood + log_uniform_prior
 
 
 def mcmc(target, start, iterations=10 ** 6, burn_in=10 ** 4):
