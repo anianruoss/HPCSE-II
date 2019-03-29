@@ -1,3 +1,5 @@
+# MAP estimation
+
 [Korali] Starting CMAES. Parameters: 3, Seed: 0x5C9D72B9
 [Korali] Gen 1 - Elapsed Time: 0.000087, Fitness Change: 1.02e+00
 [Korali] Gen 2 - Elapsed Time: 0.000078, Fitness Change: 1.86e+00
@@ -75,3 +77,19 @@
 [Korali] Parameter 'pH' Value: 7.472116
 [Korali] Parameter 'mm' Value: 115.494066
 [Korali] Total Elapsed Time: 0.006133s
+
+
+
+# Sample
+
+[Korali] Starting TMCMC. Parameters: 3, Seed: 0x5C9E0F10
+[Korali] Generation 0 - Time: 0.013196s, Annealing: 0.00%, Acceptance: 100.00%
+[Korali] Generation 1 - Time: 0.004818s, Annealing: 4.47%, Acceptance: 54.26%
+[Korali] Generation 2 - Time: 0.004591s, Annealing: 8.60%, Acceptance: 52.94%
+[Korali] Generation 3 - Time: 0.004393s, Annealing: 13.30%, Acceptance: 49.87%
+[Korali] Generation 4 - Time: 0.004869s, Annealing: 21.60%, Acceptance: 47.62%
+[Korali] Generation 5 - Time: 0.004278s, Annealing: 40.17%, Acceptance: 48.58%
+[Korali] Generation 6 - Time: 0.004292s, Annealing: 75.28%, Acceptance: 48.75%
+[Korali] Finished. Evidence: -11.131137.
+[Korali] Total Time: 0.222681s - Sampling Time: 0.040436s - Engine Time: 0.182202s.
+[Korali] Saving results to file: tmcmc.txt.

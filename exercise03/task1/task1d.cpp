@@ -50,11 +50,22 @@ int main(int argc, char* argv[]) {
 
 	problem.setReferenceData(nSpots, heights);
 
+	// used this to compute the MAP for pH and mm
+	/*
 	Korali::Solver::CMAES solver(&problem);
 
 	solver.setStopMinDeltaX(1e-11);
 	solver.setPopulationSize(256);
 	solver.setMaxGenerations(1000);
+
+	solver.run();
+	*/
+
+	// used this to sample the posterior
+	Korali::Solver::TMCMC solver(&problem);
+	
+	solver.setPopulationSize(10000);
+	solver.setCovarianceScaling(0.2);
 
 	solver.run();
 
