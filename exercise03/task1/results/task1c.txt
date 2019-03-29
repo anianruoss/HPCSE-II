@@ -1,0 +1,198 @@
+# sample grass height function
+
+[Korali] Starting TMCMC. Parameters: 2, Seed: 0x5C9D6819
+[Korali] Generation 0 - Time: 0.012298s, Annealing: 0.00%, Acceptance: 100.00%
+[Korali] Generation 1 - Time: 0.002563s, Annealing: 0.68%, Acceptance: 46.04%
+[Korali] Generation 2 - Time: 0.002562s, Annealing: 5.09%, Acceptance: 45.80%
+[Korali] Generation 3 - Time: 0.002663s, Annealing: 28.13%, Acceptance: 46.30%
+[Korali] Finished. Evidence: -3.306994.
+[Korali] Total Time: 0.118611s - Sampling Time: 0.020085s - Engine Time: 0.098458s.
+[Korali] Saving results to file: tmcmc.txt.
+
+
+
+# search for cows 
+
+Searching for cows near (3.000000, 2.500000)...
+New Cow Found! Id:#5, Position: (3.075143, 2.435791), Distance: 0.098840
+New Cow Found! Id:#13, Position: (3.149976, 2.557977), Distance: 0.160793
+New Cow Found! Id:#29, Position: (2.992293, 2.449172), Distance: 0.051409
+New Cow Found! Id:#34, Position: (3.106309, 2.779414), Distance: 0.298954
+New Cow Found! Id:#37, Position: (2.996336, 2.711961), Distance: 0.211992
+New Cow Found! Id:#48, Position: (3.246205, 2.418958), Distance: 0.259200
+New Cow Found! Id:#54, Position: (3.033415, 2.424205), Distance: 0.082834
+New Cow Found! Id:#64, Position: (2.899795, 2.438232), Distance: 0.117713
+New Cow Found! Id:#65, Position: (3.104099, 2.660392), Distance: 0.191213
+New Cow Found! Id:#66, Position: (2.982694, 2.428639), Distance: 0.073430
+New Cow Found! Id:#69, Position: (2.796009, 2.313807), Distance: 0.276189
+New Cow Found! Id:#74, Position: (2.764767, 2.560361), Distance: 0.242854
+New Cow Found! Id:#77, Position: (2.793665, 2.572154), Distance: 0.218587
+New Cow Found! Id:#79, Position: (2.705745, 2.494260), Distance: 0.294311
+New Cow Found! Id:#87, Position: (2.930782, 2.314400), Distance: 0.198087
+New Cow Found! Id:#89, Position: (3.095462, 2.557694), Distance: 0.111542
+New Cow Found! Id:#100, Position: (3.109828, 2.227934), Distance: 0.293398
+New Cow Found! Id:#108, Position: (3.203929, 2.711514), Distance: 0.293812
+New Cow Found! Id:#110, Position: (3.091502, 2.681908), Distance: 0.203625
+New Cow Found! Id:#119, Position: (3.179949, 2.473832), Distance: 0.181841
+New Cow Found! Id:#121, Position: (3.031618, 2.511779), Distance: 0.033741
+New Cow Found! Id:#129, Position: (2.993814, 2.379509), Distance: 0.120650
+New Cow Found! Id:#131, Position: (3.194323, 2.464420), Distance: 0.197554
+New Cow Found! Id:#137, Position: (3.036109, 2.565538), Distance: 0.074828
+New Cow Found! Id:#140, Position: (2.877439, 2.527676), Distance: 0.125647
+New Cow Found! Id:#150, Position: (2.964703, 2.401309), Distance: 0.104813
+New Cow Found! Id:#167, Position: (3.091013, 2.542065), Distance: 0.100264
+New Cow Found! Id:#175, Position: (3.040900, 2.524685), Distance: 0.047772
+New Cow Found! Id:#178, Position: (3.064495, 2.539276), Distance: 0.075513
+New Cow Found! Id:#200, Position: (3.155879, 2.447168), Distance: 0.164589
+New Cow Found! Id:#205, Position: (2.905434, 2.379783), Distance: 0.152953
+New Cow Found! Id:#208, Position: (2.749353, 2.648823), Distance: 0.291500
+New Cow Found! Id:#213, Position: (3.133923, 2.429174), Distance: 0.151498
+New Cow Found! Id:#224, Position: (3.075143, 2.435791), Distance: 0.098840
+New Cow Found! Id:#231, Position: (3.222417, 2.562007), Distance: 0.230899
+New Cow Found! Id:#242, Position: (2.989025, 2.507829), Distance: 0.013481
+New Cow Found! Id:#248, Position: (2.987597, 2.661875), Distance: 0.162349
+New Cow Found! Id:#253, Position: (3.215652, 2.553571), Distance: 0.222206
+New Cow Found! Id:#254, Position: (3.246333, 2.528945), Distance: 0.248028
+New Cow Found! Id:#255, Position: (3.068002, 2.439002), Distance: 0.091351
+New Cow Found! Id:#261, Position: (2.860360, 2.419486), Distance: 0.161189
+New Cow Found! Id:#262, Position: (3.126943, 2.383380), Distance: 0.172379
+New Cow Found! Id:#263, Position: (2.796009, 2.313807), Distance: 0.276189
+New Cow Found! Id:#268, Position: (2.741601, 2.620720), Distance: 0.285208
+New Cow Found! Id:#269, Position: (2.821408, 2.610384), Distance: 0.209952
+New Cow Found! Id:#271, Position: (2.832562, 2.535175), Distance: 0.171093
+New Cow Found! Id:#274, Position: (2.921902, 2.340684), Distance: 0.177429
+New Cow Found! Id:#276, Position: (3.013749, 2.434241), Distance: 0.067181
+New Cow Found! Id:#281, Position: (3.057756, 2.273723), Distance: 0.233532
+New Cow Found! Id:#286, Position: (3.203929, 2.711514), Distance: 0.293812
+New Cow Found! Id:#291, Position: (3.124038, 2.498743), Distance: 0.124044
+New Cow Found! Id:#293, Position: (2.962350, 2.412067), Distance: 0.095655
+New Cow Found! Id:#297, Position: (2.974402, 2.488020), Distance: 0.028263
+New Cow Found! Id:#299, Position: (3.186216, 2.390759), Distance: 0.215893
+New Cow Found! Id:#303, Position: (3.168857, 2.616450), Distance: 0.205118
+New Cow Found! Id:#304, Position: (2.857913, 2.427414), Distance: 0.159554
+New Cow Found! Id:#309, Position: (2.971238, 2.485075), Distance: 0.032404
+New Cow Found! Id:#321, Position: (3.050509, 2.529484), Distance: 0.058485
+New Cow Found! Id:#327, Position: (3.014163, 2.606902), Distance: 0.107836
+New Cow Found! Id:#329, Position: (3.069731, 2.505751), Distance: 0.069968
+New Cow Found! Id:#342, Position: (3.208757, 2.391451), Distance: 0.235292
+New Cow Found! Id:#359, Position: (3.003123, 2.487627), Distance: 0.012761
+New Cow Found! Id:#365, Position: (3.177418, 2.707763), Distance: 0.273208
+New Cow Found! Id:#366, Position: (3.004463, 2.749842), Distance: 0.249882
+New Cow Found! Id:#370, Position: (3.183090, 2.519563), Distance: 0.184132
+New Cow Found! Id:#371, Position: (3.111747, 2.432216), Distance: 0.130698
+New Cow Found! Id:#375, Position: (2.874201, 2.411823), Distance: 0.153625
+New Cow Found! Id:#376, Position: (3.164093, 2.423310), Distance: 0.181129
+New Cow Found! Id:#379, Position: (2.741601, 2.620720), Distance: 0.285208
+New Cow Found! Id:#381, Position: (2.926412, 2.589081), Distance: 0.115545
+New Cow Found! Id:#383, Position: (2.852385, 2.352079), Distance: 0.208976
+New Cow Found! Id:#385, Position: (3.003972, 2.541335), Distance: 0.041526
+New Cow Found! Id:#387, Position: (2.961024, 2.280900), Distance: 0.222540
+New Cow Found! Id:#393, Position: (3.110512, 2.465297), Distance: 0.115832
+New Cow Found! Id:#395, Position: (3.186216, 2.390759), Distance: 0.215893
+New Cow Found! Id:#398, Position: (3.105994, 2.554191), Distance: 0.119043
+New Cow Found! Id:#409, Position: (3.036955, 2.472207), Distance: 0.046240
+New Cow Found! Id:#413, Position: (3.251593, 2.612382), Distance: 0.275552
+New Cow Found! Id:#415, Position: (3.180695, 2.561509), Distance: 0.190877
+New Cow Found! Id:#418, Position: (3.112895, 2.701021), Distance: 0.230553
+New Cow Found! Id:#425, Position: (3.232398, 2.384385), Distance: 0.259568
+New Cow Found! Id:#437, Position: (3.054464, 2.493007), Distance: 0.054911
+New Cow Found! Id:#442, Position: (2.948384, 2.724757), Distance: 0.230608
+New Cow Found! Id:#444, Position: (3.183090, 2.519563), Distance: 0.184132
+New Cow Found! Id:#445, Position: (3.107823, 2.394460), Distance: 0.150879
+New Cow Found! Id:#447, Position: (3.013111, 2.408198), Distance: 0.092734
+New Cow Found! Id:#451, Position: (3.106398, 2.498237), Distance: 0.106412
+New Cow Found! Id:#460, Position: (3.057806, 2.539708), Distance: 0.070130
+New Cow Found! Id:#467, Position: (3.207643, 2.315589), Distance: 0.277710
+New Cow Found! Id:#477, Position: (3.056540, 2.460539), Distance: 0.068949
+New cows found: 90
+Total cows found so far: 115
+Herr Kueheli says: "Great, this strategy is really effective!."
+>>> Time until deadline: 30 minutes. <<<
+
+
+
+# search for cows 
+
+Searching for cows near (3.200000, 2.500000)...
+New Cow Found! Id:#9, Position: (3.267307, 2.689033), Distance: 0.200658
+New Cow Found! Id:#11, Position: (3.427519, 2.591994), Distance: 0.245414
+New Cow Found! Id:#33, Position: (3.311894, 2.693975), Distance: 0.223935
+New Cow Found! Id:#36, Position: (3.283155, 2.700439), Distance: 0.217003
+New Cow Found! Id:#38, Position: (3.216492, 2.711097), Distance: 0.211741
+New Cow Found! Id:#51, Position: (3.296271, 2.599696), Distance: 0.138591
+New Cow Found! Id:#53, Position: (3.274004, 2.636135), Distance: 0.154949
+New Cow Found! Id:#83, Position: (3.328769, 2.687110), Distance: 0.227138
+New Cow Found! Id:#91, Position: (3.426995, 2.649907), Distance: 0.272028
+New Cow Found! Id:#104, Position: (3.291198, 2.660607), Distance: 0.184694
+New Cow Found! Id:#105, Position: (3.174784, 2.745704), Distance: 0.246995
+New Cow Found! Id:#146, Position: (3.243536, 2.720260), Distance: 0.224521
+New Cow Found! Id:#149, Position: (3.323185, 2.731324), Distance: 0.262079
+New Cow Found! Id:#154, Position: (3.351334, 2.493972), Distance: 0.151454
+New Cow Found! Id:#173, Position: (3.364867, 2.716493), Distance: 0.272122
+New Cow Found! Id:#183, Position: (3.241435, 2.708881), Distance: 0.212951
+New Cow Found! Id:#199, Position: (3.301730, 2.632729), Distance: 0.167230
+New Cow Found! Id:#228, Position: (3.278706, 2.621186), Distance: 0.144502
+New Cow Found! Id:#229, Position: (3.434963, 2.673701), Distance: 0.292198
+New Cow Found! Id:#245, Position: (3.268508, 2.727499), Distance: 0.237590
+New Cow Found! Id:#247, Position: (3.262229, 2.739879), Distance: 0.247819
+New Cow Found! Id:#272, Position: (3.276759, 2.676771), Distance: 0.192717
+New Cow Found! Id:#273, Position: (3.220253, 2.792292), Distance: 0.292993
+New Cow Found! Id:#307, Position: (3.297478, 2.679793), Distance: 0.204518
+New Cow Found! Id:#313, Position: (3.334489, 2.529940), Distance: 0.137782
+New Cow Found! Id:#332, Position: (3.252817, 2.681616), Distance: 0.189140
+New Cow Found! Id:#341, Position: (3.349012, 2.626595), Distance: 0.195528
+New Cow Found! Id:#400, Position: (3.312988, 2.652167), Distance: 0.189529
+New Cow Found! Id:#424, Position: (3.346575, 2.642434), Distance: 0.204381
+New Cow Found! Id:#455, Position: (3.326125, 2.679505), Distance: 0.219385
+New Cow Found! Id:#459, Position: (3.395587, 2.692890), Distance: 0.274701
+New Cow Found! Id:#463, Position: (3.209083, 2.781782), Distance: 0.281928
+New cows found: 32
+Total cows found so far: 147
+Herr Kueheli says: "Great, this strategy is really effective!."
+>>> Time until deadline: 25 minutes. <<<
+
+
+
+# search for cows 
+
+Searching for cows near (2.800000, 2.500000)...
+New Cow Found! Id:#19, Position: (2.677873, 2.591331), Distance: 0.152500
+New Cow Found! Id:#52, Position: (2.786345, 2.229289), Distance: 0.271055
+New Cow Found! Id:#57, Position: (2.662640, 2.652070), Distance: 0.204922
+New Cow Found! Id:#59, Position: (2.689777, 2.319870), Distance: 0.211177
+New Cow Found! Id:#75, Position: (2.743167, 2.667507), Distance: 0.176886
+New Cow Found! Id:#94, Position: (2.760441, 2.768630), Distance: 0.271528
+New Cow Found! Id:#109, Position: (2.770317, 2.238131), Distance: 0.263546
+New Cow Found! Id:#124, Position: (2.676895, 2.314677), Distance: 0.222484
+New Cow Found! Id:#132, Position: (2.627527, 2.681869), Distance: 0.250646
+New Cow Found! Id:#133, Position: (2.816189, 2.246190), Distance: 0.254326
+New Cow Found! Id:#142, Position: (2.701080, 2.647373), Distance: 0.177494
+New Cow Found! Id:#158, Position: (2.638383, 2.663227), Distance: 0.229702
+New Cow Found! Id:#174, Position: (2.670027, 2.371877), Distance: 0.182506
+New Cow Found! Id:#189, Position: (2.712771, 2.609939), Distance: 0.140341
+New Cow Found! Id:#203, Position: (2.529703, 2.558016), Distance: 0.276453
+New Cow Found! Id:#210, Position: (2.567103, 2.554320), Distance: 0.239148
+New Cow Found! Id:#218, Position: (2.611618, 2.408246), Distance: 0.209539
+New Cow Found! Id:#234, Position: (2.663286, 2.653508), Distance: 0.205561
+New Cow Found! Id:#294, Position: (2.578686, 2.602568), Distance: 0.243926
+New Cow Found! Id:#300, Position: (2.674922, 2.732004), Distance: 0.263572
+New Cow Found! Id:#305, Position: (2.748999, 2.681890), Distance: 0.188905
+New Cow Found! Id:#316, Position: (2.621655, 2.558080), Distance: 0.187563
+New Cow Found! Id:#335, Position: (2.602632, 2.530913), Distance: 0.199774
+New Cow Found! Id:#347, Position: (2.686082, 2.582964), Distance: 0.140926
+New Cow Found! Id:#349, Position: (2.578027, 2.590479), Distance: 0.239705
+New Cow Found! Id:#353, Position: (2.649797, 2.454072), Distance: 0.157068
+New Cow Found! Id:#388, Position: (2.525874, 2.618585), Distance: 0.298676
+New Cow Found! Id:#399, Position: (2.690257, 2.717008), Distance: 0.243179
+New Cow Found! Id:#406, Position: (2.629110, 2.568304), Distance: 0.184035
+New Cow Found! Id:#419, Position: (2.632031, 2.586019), Distance: 0.188714
+New Cow Found! Id:#429, Position: (2.686082, 2.582964), Distance: 0.140926
+New Cow Found! Id:#454, Position: (2.671503, 2.704098), Distance: 0.241180
+New Cow Found! Id:#458, Position: (2.591527, 2.572780), Distance: 0.220812
+New Cow Found! Id:#464, Position: (2.622614, 2.584142), Distance: 0.196330
+New Cow Found! Id:#468, Position: (2.509923, 2.557012), Distance: 0.295626
+New Cow Found! Id:#485, Position: (2.554266, 2.566963), Distance: 0.254694
+New Cow Found! Id:#493, Position: (2.564915, 2.580359), Distance: 0.248441
+New cows found: 37
+Total cows found so far: 184
+Herr Kueheli says: "Thanks so much, you and Korali helped me find all my cows in time!."

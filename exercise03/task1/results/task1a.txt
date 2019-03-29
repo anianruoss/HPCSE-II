@@ -1,0 +1,31 @@
+# Running task1a
+
+[Korali] Finished - Reason: Function value changes (4.74e-14) < (1.00e-13)
+[Korali] Parameter 'x' Value: 4.085200
+[Korali] Parameter 'y' Value: 3.747600
+[Korali] Total Elapsed Time: 0.002812s
+
+
+
+# Running check_cows
+
+Searching for cows near (4.085200, 3.747600)...
+New Cow Found! Id:#95, Position: (4.153557, 3.972554), Distance: 0.235111
+New Cow Found! Id:#130, Position: (4.219451, 3.755086), Distance: 0.134460
+New Cow Found! Id:#267, Position: (3.901680, 3.571877), Distance: 0.254083
+New Cow Found! Id:#279, Position: (4.127642, 3.933766), Distance: 0.190943
+New Cow Found! Id:#298, Position: (4.049541, 3.729459), Distance: 0.040008
+New Cow Found! Id:#378, Position: (3.899571, 3.599574), Distance: 0.237423
+New Cow Found! Id:#386, Position: (4.098821, 3.938975), Distance: 0.191859
+New Cow Found! Id:#407, Position: (4.144751, 4.004599), Distance: 0.263809
+New Cow Found! Id:#449, Position: (4.097446, 3.971806), Distance: 0.224540
+New cows found: 9
+Total cows found so far: 9
+Herr Kueheli says: "I knew we should look around the spot with the tallest grass!."
+Herr Kueheli says: "The rest of the cows should be around here. Lets try these nearby points:"
+[4.08, 3.95]
+[4.28, 3.75]
+[3.88, 3.75]
+[4.08, 3.55]
+>>> Time until deadline: 55 minutes. <<<
+

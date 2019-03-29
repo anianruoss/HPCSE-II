@@ -1,0 +1,45 @@
+Searching for cows near (4.080000, 3.950000)...
+New Cow Found! Id:#20, Position: (4.274126, 4.013635), Distance: 0.204289
+New Cow Found! Id:#24, Position: (4.312318, 4.051145), Distance: 0.253381
+New Cow Found! Id:#135, Position: (4.300406, 4.138333), Distance: 0.289911
+New Cow Found! Id:#159, Position: (4.257531, 4.011793), Distance: 0.187977
+New Cow Found! Id:#190, Position: (4.242909, 4.156680), Distance: 0.263165
+New Cow Found! Id:#235, Position: (4.269124, 4.096134), Distance: 0.239004
+New Cow Found! Id:#238, Position: (4.272254, 4.042875), Distance: 0.213512
+New Cow Found! Id:#265, Position: (4.256778, 4.150874), Distance: 0.267583
+New Cow Found! Id:#317, Position: (4.257531, 4.011793), Distance: 0.187977
+New Cow Found! Id:#336, Position: (4.240627, 4.143513), Distance: 0.251492
+New Cow Found! Id:#361, Position: (4.307999, 4.099270), Distance: 0.272516
+New Cow Found! Id:#420, Position: (4.282964, 4.083839), Distance: 0.243120
+New Cow Found! Id:#470, Position: (4.224628, 4.105519), Distance: 0.212376
+New Cow Found! Id:#487, Position: (4.224628, 4.105519), Distance: 0.212376
+New Cow Found! Id:#495, Position: (4.171655, 4.122416), Distance: 0.195264
+New cows found: 15
+Total cows found so far: 24
+Herr Kueheli says: "That was good, but we need to find them faster!."
+>>> Time until deadline: 50 minutes. <<<
+
+
+
+Searching for cows near (4.280000, 3.750000)...
+New cows found: 0
+Total cows found so far: 24
+Herr Kueheli says: "That was not good enough, perhaps this strategy does not really work."
+>>> Time until deadline: 45 minutes. <<<
+
+
+
+Searching for cows near (3.880000, 3.750000)...
+New Cow Found! Id:#73, Position: (3.890320, 3.468693), Distance: 0.281496
+New cows found: 1
+Total cows found so far: 25
+Herr Kueheli says: "That was not good enough, perhaps this strategy does not really work."
+>>> Time until deadline: 40 minutes. <<<
+
+
+
+Searching for cows near (4.080000, 3.550000)...
+New cows found: 0
+Total cows found so far: 25
+Herr Kueheli says: "That was not good enough, perhaps this strategy does not really work."
+>>> Time until deadline: 35 minutes. <<<
