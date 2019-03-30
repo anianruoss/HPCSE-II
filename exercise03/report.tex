@@ -147,29 +147,29 @@ Herr Kueheli says: "That was not good enough, perhaps this strategy does not rea
     \label{subsubsec:Task1c}
 
     We use Korali's TMCMC sampling engine to gain a better understanding of
-    the grass height distribution around the farm and display the results
-    in Figure~\ref{fig:GrassHeight}.
+    the grass growth at the farm and display the results in
+    Figure~\ref{fig:GrassHeight}.
 
     \begin{figure}[H]
          \begin{center}
             \includegraphics[width=.75\textwidth]{task1/results/task1c.eps}
         \end{center}
         \caption{Visualization of the grass growth distribution.
-        We oberserve (local) maxima at roughly $\left( 4.08, 3 .75 \right)$
+        We oberserve maxima at roughly $\left( 4.08, 3 .75 \right)$
         (as obtained in Listing~\ref{lst:KoraliOptGrassCoords}) and
         $\left( 3, 2.5 \right)$.}
         \label{fig:GrassHeight}
     \end{figure}
 
-    With this information we check for cows at the (local) maximum
-    $\left( 3, 2.5 \right)$ and in its immediate surroundings (due to Mr.
-    Kueheli's reasoning from above.) and we present the terminal outputs in
-    listings~\ref{lst:CowsOpt},~\ref{lst:CowsOptRight},
+    With this information we check for cows at the maximum
+    $\left( 3, 2.5 \right)$ and in its immediate surroundings (as we can see
+    that the grass is also fairly high there) and we present the terminal
+    outputs in listings~\ref{lst:CowsOpt},~\ref{lst:CowsOptRight},
     and~\ref{lst:CowsOptLeft}.
 
     \begin{lstlisting}[basicstyle=\tiny, frame=single,
     caption={Terminal output for $check\_cows$ for the coordinates of the
-    (local) maximum observed in Figure~\ref{fig:GrassHeight}.},
+    maximum observed in Figure~\ref{fig:GrassHeight}.},
     label={lst:CowsOpt}]
 Searching for cows near (3.000000, 2.500000)...
 ...
@@ -180,8 +180,8 @@ Herr Kueheli says: "Great, this strategy is really effective!."
     \end{lstlisting}
     \begin{lstlisting}[basicstyle=\tiny, frame=single,
     caption={Terminal output for $check\_cows$ for a point in the
-    neighborhood of the (local) maximum observed in
-    Figure~\ref{fig:GrassHeight}.}, label={lst:CowsOptRight}]
+    neighborhood of the maximum observed in Figure~\ref{fig:GrassHeight}.},
+    label={lst:CowsOptRight}]
 Searching for cows near (3.200000, 2.500000)...
 ...
 New cows found: 32
@@ -191,8 +191,8 @@ Herr Kueheli says: "Great, this strategy is really effective!."
     \end{lstlisting}
     \begin{lstlisting}[basicstyle=\tiny, frame=single,
     caption={Terminal output for $check\_cows$ for a point in the
-    neighborhood of the (local) maximum observed in
-    Figure~\ref{fig:GrassHeight}.}, label={lst:CowsOptLeft}]
+    neighborhood of the maximum observed in Figure~\ref{fig:GrassHeight}.},
+    label={lst:CowsOptLeft}]
 Searching for cows near (2.800000, 2.500000)...
 ...
 New cows found: 37
@@ -212,10 +212,10 @@ Herr Kueheli says: "Thanks so much, you and Korali helped me find all my cows in
     In this concrete case, we observe that the global maximum has a
     relatively small neighborhood of high grass whereas other local maxima
     have larger areas of high grass surrounding them.
-    Naturally, we expect more cows in larger areas of high grass (i.e.\ the
-    local maximum) than in a small area with very high grass (i.e.\ the
-    global maximum) as cows tend to value some personal space\footnote{This
-    has been verified via personal communication with a large sample of cows.}.
+    Naturally, we expect more cows in larger areas of high grass than in a
+    small area with very high grass as cows tend to value some personal
+    space\footnote{This has been verified via personal communication with a
+    large sample of cows.}.
     Of course, we don't know this before looking at the underlying distribution
     so the initial strategy is not the most efficient (of course, this
     assumes the we can actually sample from the distribution).
@@ -225,14 +225,14 @@ Herr Kueheli says: "Thanks so much, you and Korali helped me find all my cows in
 
     We can use Korali to investigate the posterior distribution of the
     parameters pH and mm given the grass growth and suitable priors.
-    Naturally we model experts' clues as prior distributions of the pH and the
-    rain volume.
+    Naturally we model the experts' clues as prior distributions of the pH and
+    the rain volume.
     More concretely, we set $p(\text{pH}) \sim \mathcal{U}(4, 9)$ and
     $p(\text{mm}) \sim \mathcal{N}(90, 20)$.
     Korali requires us to set bounds for the Gaussian prior on mm.
     We choose the lower bound of $0$ (as we cannot have negative rain) and
     the upper bound of $180$ (for symmetry around the mean).
-    Employing Korali's CMAES solver we maximize the posterior and we display
+    Employing Korali's CMA-ES solver we maximize the posterior and we display
     the results in Listing~\ref{lst:MaxGrassPosterior}.
 
     \begin{lstlisting}[basicstyle=\tiny, frame=single, caption={Korali
@@ -252,8 +252,7 @@ Herr Kueheli says: "Thanks so much, you and Korali helped me find all my cows in
     rather high.
     For this, reason we sample from the posterior distribution of the
     parameters with Korali's TMCMC sampling engine to get a better estimate
-    of the soil conditions and we display the results in
-    Figure~\ref{fig:GrassPosterior}.
+    of the soil and we display the results in Figure~\ref{fig:GrassPosterior}.
 
     \begin{figure}[H]
         \begin{center}
@@ -263,7 +262,7 @@ Herr Kueheli says: "Thanks so much, you and Korali helped me find all my cows in
         parameters.
         The histogram in the center shows that the pH distribution is skewed
         to the right of $7.5$.
-        The bottom-left histogram shows that the rain volume falls almost
+        The bottom-right histogram shows that the rain volume falls almost
         entirely within the range $\left[ 110, 120 \right]$.
         }
         \label{fig:GrassPosterior}
@@ -285,6 +284,170 @@ Herr Kueheli says: "Thanks so much, you and Korali helped me find all my cows in
     \subsubsection*{a)}
     \label{subsubsec:Task2a}
 
+    We use the heat2DSolver to model the temperature distribution on the
+    steel sheets.
+    Since we want to determine how many candles were used during the
+    manufacturing we consider three cases with different parameters (x- and
+    y-coordinate for every candle):
+
+    \begin{itemize}
+        \item[--] one candle: candle can be applied anywhere on the sheet,
+        i.e.\ uniformly between $0$ and $1$ for both axes.
+        \item[--] two candles: the first candle is located on the left half,
+        the second on the right half so we restrict the upper and lower bounds
+        for the x-axis to $[0, 0.5]$ and $[0.5, 1]$ respectively.
+        \item[--] three candles: similar to the two-candle case the third
+        candle is restricted to $[0.5, 1]$ on the x-axis.
+    \end{itemize}
+
+    Since we are comparing three different models we want to compare the
+    model evidence to determine the best model.
+    For this reason, we employ Korali's TMCMC sampling engine to obtain the
+    log-evidence of the likelihood (since we don't have any prior
+    information on the candle positions) for all three models which we show in
+    listings~\ref{lst:OneCandleEvidence},~\ref{lst:TwoCandleEvidence},
+    and~\ref{lst:ThreeCandleEvidence}.
+
+     \begin{lstlisting}[basicstyle=\tiny, frame=single, caption={Korali
+    output when sampling the likelihood of the heat distribution given the
+     model with one candle.}, label={lst:OneCandleEvidence}]
+[Korali] Starting TMCMC. Parameters: 3, Seed: 0x5C9F4376
+...
+[Korali] Finished. Evidence: -123.834360.
+[Korali] Total Time: 43.688758s - Sampling Time: 43.565325s - Engine Time: 0.123391s.
+[Korali] Saving results to file: tmcmc.txt.
+    \end{lstlisting}
+     \begin{lstlisting}[basicstyle=\tiny, frame=single, caption={Korali
+    output when sampling the likelihood of the heat distribution given the
+     model with two candles.}, label={lst:TwoCandleEvidence}]
+[Korali] Starting TMCMC. Parameters: 5, Seed: 0x5C9F43D7
+...
+[Korali] Finished. Evidence: -111.435075.
+[Korali] Total Time: 55.662284s - Sampling Time: 55.459889s - Engine Time: 0.202349s.
+[Korali] Saving results to file: tmcmc.txt.
+    \end{lstlisting}
+     \begin{lstlisting}[basicstyle=\tiny, frame=single, caption={Korali
+    output when sampling the likeilhood of the heat distribution given the
+     model with three candles.}, label={lst:ThreeCandleEvidence}]
+[Korali] Starting TMCMC. Parameters: 7, Seed: 0x5C9F4443
+...
+[Korali] Finished. Evidence: -88.339730.
+[Korali] Total Time: 67.403041s - Sampling Time: 67.192638s - Engine Time: 0.210330s.
+[Korali] Saving results to file: tmcmc.txt.
+    \end{lstlisting}
+
+    We observe that the 3-candles model has the highest evidence and thus it
+    is most likely that 3 workers treated the sheet.
+    To find the most likely positions of every candle we maximize the
+    likelihood with Korali's CMA-ES solver and display the output for the
+    optimal model (and the two other models for completeness) in
+    listings~\ref{lst:OneCandleMax},~\ref{lst:TwoCandleMax},
+    and~\ref{lst:ThreeCandleMax}.
+
+    \begin{lstlisting}[basicstyle=\tiny, frame=single, caption={Korali
+    output when maximizing the likelihood of the heat distribution given the
+    model with one candle.}, label={lst:OneCandleMax}]
+[Korali] Starting CMAES. Parameters: 3, Seed: 0x5C9F48B3
+...
+[Korali] Finished - Reason: Function value differences (5.68e-13) < (1.00e-12)
+[Korali] Parameter 'Sigma' Value: 6.112970
+[Korali] Parameter 'pos_x_1' Value: 0.721352
+[Korali] Parameter 'pos_y_1' Value: 0.754621
+[Korali] Total Elapsed Time: 12.402701s
+    \end{lstlisting}
+     \begin{lstlisting}[basicstyle=\tiny, frame=single, caption={Korali
+    output when maximizing the likelihood of the heat distribution given the
+     model with two candles.}, label={lst:TwoCandleMax}]
+[Korali] Starting CMAES. Parameters: 5, Seed: 0x5C9F490D
+...
+[Korali] Parameter 'Sigma' Value: 3.074527
+[Korali] Parameter 'pos_x_1' Value: 0.282510
+[Korali] Parameter 'pos_y_1' Value: 0.250302
+[Korali] Parameter 'pos_x_2' Value: 0.736871
+[Korali] Parameter 'pos_y_2' Value: 0.770096
+[Korali] Total Elapsed Time: 20.062159s
+    \end{lstlisting}
+     \begin{lstlisting}[basicstyle=\tiny, frame=single, caption={Korali
+    output when maximizing the likelihood of the heat distribution given the
+     model with three candles.}, label={lst:ThreeCandleMax}]
+[Korali] Starting CMAES. Parameters: 7, Seed: 0x5C9F4710
+...
+[Korali] Parameter 'Sigma' Value: 1.039126
+[Korali] Parameter 'pos_x_1' Value: 0.208636
+[Korali] Parameter 'pos_y_1' Value: 0.219382
+[Korali] Parameter 'pos_x_2' Value: 0.705800
+[Korali] Parameter 'pos_y_2' Value: 0.709230
+[Korali] Parameter 'pos_x_3' Value: 0.804045
+[Korali] Parameter 'pos_y_3' Value: 0.802827
+[Korali] Total Elapsed Time: 37.414965s
+    \end{lstlisting}
+
+    Hence, for our selected model we find the most likely candle positions to
+    be:
+    \begin{itemize}
+        \item[--] candle one at $[0.208636, 0.219382]$
+        \item[--] candle two at $[0.705800, 0.709230]$
+        \item[--] candle three at $[0.804045, 0.802827]$
+    \end{itemize}
+
+    \subsubsection*{b)}
+    \label{subsubsec:Task2b}
+
+    We now have prior information on the candle positions that we can
+    incorporate into our model.
+    Hence, we formulate the following prior distributions for the
+    x-coordinates:
+    \mbox{$\text{candle-}1_{ x} \sim \mathcal{N}\left( 0.25, 0.05 \right)$}, \
+    \mbox{$\text{candle-}2_{ x} \sim \mathcal{N}\left( 0.75, 0.05 \right)$}, and
+    \mbox{$\text{candle-}3_{ x} \sim \mathcal{N}\left( 0.75, 0.05 \right)$}.
+    We keep the upper and lower bounds from the previous subtask for both
+    axes.
+    Since we have prior information we now investigate the posterior
+    distribution of the parameters with the same solvers as described in the
+    previous subtask and we present the results in
+    listings~\ref{lst:ThreeCandlePosteriorEvidence}
+    and~\ref{lst:ThreeCandlePosteriorMax}.
+
+   \begin{lstlisting}[basicstyle=\tiny, frame=single, caption={Korali
+    output when sampling the posterior distribution of the candle positions
+   for the 3-candle model.}, label={lst:ThreeCandlePosteriorEvidence}]
+[Korali] Starting TMCMC. Parameters: 7, Seed: 0x5C9F4D00
+...
+[Korali] Finished. Evidence: -66.664045.
+[Korali] Total Time: 62.823597s - Sampling Time: 62.608716s - Engine Time: 0.214820s.
+[Korali] Saving results to file: tmcmc.txt.
+   \end{lstlisting}
+   \begin{lstlisting}[basicstyle=\tiny, frame=single, caption={Korali
+    output when maximizing the posterior distribution of the candle positions
+   for the 3-candle model.}, label={lst:ThreeCandlePosteriorMax}]
+[Korali] Starting CMAES. Parameters: 7, Seed: 0x5C9F4CC1
+...
+[Korali] Finished - Reason: Function value differences (8.38e-13) < (1.00e-12)
+[Korali] Parameter 'Sigma' Value: 1.039860
+[Korali] Parameter 'pos_x_1' Value: 0.209252
+[Korali] Parameter 'pos_y_1' Value: 0.220602
+[Korali] Parameter 'pos_x_2' Value: 0.803022
+[Korali] Parameter 'pos_y_2' Value: 0.804381
+[Korali] Parameter 'pos_x_3' Value: 0.708072
+[Korali] Parameter 'pos_y_3' Value: 0.707453
+[Korali] Total Elapsed Time: 36.914642s
+    \end{lstlisting}
+
+    We observe that the model evidence is higher than before implying that
+    incorporating the prior information provides a \say{better fit} with
+    respect to the observed data.
+    Hence, we conclude that applying the candles at the new optimal
+    positions should result in a build quality similar to that of sheet
+    $\#004392$.
+    The new optimal candle positions are:
+    \begin{itemize}
+        \item[--] candle one at $[0.209252, 0.220602]$
+        \item[--] candle two\footnote{The numbering of
+        candles two and three is arbitrary and thus we swap the numbers to
+        keep the optimal positions consistent with the previous subtask.} at
+        $[0.708072, 0.707453]$
+        \item[--] candle three at $[0.803022, 0.804381]$
+    \end{itemize}
 
 
 
