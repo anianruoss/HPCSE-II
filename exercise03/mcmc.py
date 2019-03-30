@@ -138,7 +138,7 @@ burn_in_iterations = 10 ** 2
 num_iterations = 10 ** 5
 starting_sample = 0.5
 
-fig, ax = plt.subplots(2, 2, sharex='all', sharey='col')
+fig, ax = plt.subplots(2, 2, sharex='all')
 
 for i, (tosses, heads) in enumerate([(300, 150), (3000, 1500)]):
     samples_mcmc = mcmc(
