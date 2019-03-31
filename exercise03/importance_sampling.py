@@ -15,7 +15,7 @@ start_1 = time.perf_counter()
 
 y = standard_normal.rvs(size=n)
 
-estimator_1 = y[4.5 < y].sum() / n
+estimator_1 = (4.5 < y).sum() / n
 
 end_1 = time.perf_counter()
 
