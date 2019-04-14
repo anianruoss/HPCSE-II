@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
   int startId = rankId * batchSize;
   int endId = (rankId + 1) * batchSize;
 
-  // for simplicity, allows usage of MPI_Gather
+  // for simplicity: allows easy usage of MPI_Gather
   assert(nSamples % rankCount == 0);
   if (rankId == rankCount - 1) {
     assert(endId == nSamples);
