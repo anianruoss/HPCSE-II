@@ -36,11 +36,9 @@ int main(int argc, char *argv[]) {
   if (rankId == 0) {
     printf("Processing %ld Samples each with %ld Parameter(s)...\n", nSamples,
            nParameters);
-  }
 
-  auto start = std::chrono::steady_clock::now();
+    auto start = std::chrono::steady_clock::now();
 
-  if (rankId == 0) {
     std::queue<Consumer> consumers;
 
     const size_t nConsumers = rankCount - 1;
