@@ -1,9 +1,9 @@
-#include "sampler/sampler.hpp"
 #include <algorithm>
 #include <chrono>
 #include <cmath>
 #include <stdio.h>
 #include <upcxx/upcxx.hpp>
+#include "sampler/sampler.hpp"
 
 size_t nSamples;
 size_t nParameters;

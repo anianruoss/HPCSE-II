@@ -1,12 +1,12 @@
-#include "sampler/sampler.hpp"
 #include <cassert>
 #include <chrono>
 #include <iostream>
 #include <numeric>
 #include <queue>
 #include <stdio.h>
-#include <upcxx/upcxx.hpp>
 #include <vector>
+#include <upcxx/upcxx.hpp>
+#include "sampler/sampler.hpp"
 
 #define NSAMPLES 240
 #define NPARAMETERS 2

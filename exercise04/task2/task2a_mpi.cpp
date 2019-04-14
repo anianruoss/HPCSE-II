@@ -1,4 +1,3 @@
-#include "sampler/sampler.hpp"
 #include <algorithm>
 #include <cassert>
 #include <chrono>
@@ -7,6 +6,7 @@
 #include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "sampler/sampler.hpp"
 
 size_t nSamples;
 size_t nParameters;
