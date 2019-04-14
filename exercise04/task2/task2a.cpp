@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <cmath>
 #include <stdio.h>
 #include <chrono>
 #include <upcxx/upcxx.hpp>
@@ -18,8 +20,57 @@ int main(int argc, char* argv[])
 	nSamples = NSAMPLES;
 	nParameters = NPARAMETERS;
 
-	checkResults(0 /* This will FAIL */ ); // Make sure you check results!
+	double* sampleArray = initializeSampler(nSamples, nParameters);
+
+	int batchSize = std::ceil(static_cast<float>(nSamples) / rankCount);
+	int startId = rankId * batchSize;
+	int endId = std::min((rankId + 1) * batchSize, static_cast<int>(nSamples));
+
+	auto start = std::chrono::steady_clock::now();
+
+	upcxx::global_ptr<double> gptr;
+
+	if (rankId == 0) {
+		gptr = upcxx::new_array<double>(nSamples);
+	}
+
+	upcxx::broadcast(&gptr, 1, 0).wait();
+
+	upcxx::future<> futures = upcxx::make_future();
+
+	for (int localId = 0; localId < endId - startId; ++localId) {
+		int globalId = startId + localId;
+		double result = evaluateSample(&sampleArray[globalId*nParameters]);
+		auto future = upcxx::rput(&result, gptr + globalId, 1);
+		futures = upcxx::when_all(futures, future);
+	}
+
+	futures.wait();
+
+	auto end = std::chrono::steady_clock::now();
+
+	double rankTime = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+
+	auto sumTime = upcxx::reduce_one(rankTime, upcxx::op_fast_add, 0);
+	auto maxTime = upcxx::reduce_one(rankTime, upcxx::op_fast_max, 0);
+
+	upcxx::barrier();
+
+	if (rankId == 0) {
+		checkResults(gptr.local());
+
+		sumTime.wait();
+		maxTime.wait();
+
+		double totalTime = maxTime.result();
+		double averageTime = sumTime.result() / rankCount;
+
+		std::cout << "Total time:           " << totalTime << std::endl;
+		std::cout << "Average time:         " << averageTime << std::endl;
+		std::cout << "Load imbalance ratio: " << (totalTime - averageTime) / totalTime << std::endl;
+	}
 
 	upcxx::finalize();
+
 	return 0;
 }
