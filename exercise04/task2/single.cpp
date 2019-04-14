@@ -19,14 +19,17 @@ int main(int argc, char* argv[])
 
 	printf("Processing %ld Samples each with %ld Parameter(s)...\n", nSamples, nParameters);
 
-  auto start = std::chrono::system_clock::now();
-  for (size_t i = 0; i < nSamples; i++) resultsArray[i] = evaluateSample(&sampleArray[i*nParameters]);
-  auto end = std::chrono::system_clock::now();
+	auto start = std::chrono::system_clock::now();
 
-  checkResults(resultsArray);
+	for (size_t i = 0; i < nSamples; i++) 
+		resultsArray[i] = evaluateSample(&sampleArray[i*nParameters]);
 
-  double totalTime = std::chrono::duration<double>(end-start).count();
-  printf("Total Running Time: %.3fs\n", totalTime);
+	auto end = std::chrono::system_clock::now();
+
+	checkResults(resultsArray);
+
+	double totalTime = std::chrono::duration<double>(end-start).count();
+	printf("Total Running Time: %.3fs\n", totalTime);
 
 	return 0;
 }

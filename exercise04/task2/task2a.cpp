@@ -20,6 +20,6 @@ int main(int argc, char* argv[])
 
 	checkResults(0 /* This will FAIL */ ); // Make sure you check results!
 
-  upcxx::finalize();
+	upcxx::finalize();
 	return 0;
 }

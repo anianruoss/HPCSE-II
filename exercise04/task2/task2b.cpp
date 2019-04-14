@@ -20,21 +20,22 @@ int main(int argc, char* argv[])
 	nSamples = NSAMPLES;
 	nParameters = NPARAMETERS;
 
-  if (rankId == 0) printf("Processing %ld Samples each with %ld Parameter(s)...\n", nSamples, nParameters);
+	if (rankId == 0) 
+		printf("Processing %ld Samples each with %ld Parameter(s)...\n", nSamples, nParameters);
 
-  auto t0 = std::chrono::system_clock::now();
+	auto t0 = std::chrono::system_clock::now();
 
-  // Solution should be placed here for good timing
+	// Solution should be placed here for good timing
 
 	auto t1 = std::chrono::system_clock::now();
 
 	if (rankId == 0)
 	{
-	 checkResults(0 /* This will FAIL */ ); // Make sure you check results!
-	 double evalTime = std::chrono::duration<double>(t1-t0).count();
-	 printf("Total Running Time: %.3fs\n", evalTime);
+		checkResults(0 /* This will FAIL */ ); // Make sure you check results!
+		double evalTime = std::chrono::duration<double>(t1-t0).count();
+		printf("Total Running Time: %.3fs\n", evalTime);
 	}
 
-  upcxx::finalize();
+	upcxx::finalize();
 	return 0;
 }
