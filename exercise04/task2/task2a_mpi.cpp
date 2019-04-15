@@ -24,43 +24,32 @@ int main(int argc, char *argv[]) {
   nSamples = NSAMPLES;
   nParameters = NPARAMETERS;
 
+  int batchSize = nSamples / rankCount;
+
+  // for simplicity: allows easy usage of collective operations
+  assert(nSamples % rankCount == 0);
+
   double *sampleArray;
 
   if (rankId == 0) {
 	  sampleArray = initializeSampler(nSamples, nParameters);
   } else {
-	  sampleArray = new double[nSamples*nParameters];
+	  sampleArray = (double *)calloc(batchSize*nParameters, sizeof(double));
   }
 
-  MPI_Bcast(sampleArray, nSamples*nParameters, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+  MPI_Scatter(sampleArray, batchSize*nParameters, MPI_DOUBLE, rankId == 0 ? MPI_IN_PLACE : sampleArray, batchSize*nParameters, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-  double *resultsArray = (double *)calloc(nSamples, sizeof(double));
+  double *resultsArray = (double *)calloc(rankId == 0 ? nSamples : batchSize, sizeof(double));
 
-  int batchSize = nSamples / rankCount;
-  int startId = rankId * batchSize;
-  int endId = (rankId + 1) * batchSize;
-
-  // for simplicity: allows easy usage of MPI_Gather
-  assert(nSamples % rankCount == 0);
-  if (rankId == rankCount - 1) {
-    assert(endId == nSamples);
-  }
+  MPI_Barrier(MPI_COMM_WORLD);
 
   auto start = std::chrono::steady_clock::now();
 
   for (int localId = 0; localId < batchSize; ++localId) {
-    int globalId = startId + localId;
-    resultsArray[globalId] =
-        evaluateSample(&sampleArray[globalId * nParameters]);
+    resultsArray[localId] = evaluateSample(&sampleArray[localId * nParameters]);
   }
 
-  if (rankId == 0) {
-    MPI_Gather(MPI_IN_PLACE, batchSize, MPI_DOUBLE, resultsArray, batchSize,
-               MPI_DOUBLE, 0, MPI_COMM_WORLD);
-  } else {
-    MPI_Gather(resultsArray + startId, batchSize, MPI_DOUBLE, MPI_IN_PLACE,
-               batchSize, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-  }
+  MPI_Gather(rankId == 0 ? MPI_IN_PLACE : resultsArray, batchSize, MPI_DOUBLE, resultsArray, batchSize, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
   auto end = std::chrono::steady_clock::now();
 
@@ -72,6 +61,8 @@ int main(int argc, char *argv[]) {
 
   MPI_Reduce(&rankTime, &maxTime, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
   MPI_Reduce(&rankTime, &sumTime, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+
+  MPI_Barrier(MPI_COMM_WORLD);
 
   if (rankId == 0) {
     checkResults(resultsArray);
