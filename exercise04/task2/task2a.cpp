@@ -22,20 +22,21 @@ int main(int argc, char *argv[]) {
   double *sampleArray;
 
   if (rankId == 0) {
-	  sampleArray = initializeSampler(nSamples, nParameters);
+    sampleArray = initializeSampler(nSamples, nParameters);
   } else {
-	  sampleArray = new double[nSamples*nParameters];
+    sampleArray = new double[nSamples * nParameters];
   }
 
-  upcxx::broadcast(sampleArray, nSamples*nParameters, 0).wait();
- 
+  upcxx::broadcast(sampleArray, nSamples * nParameters, 0).wait();
+
   int batchSize = std::ceil(static_cast<float>(nSamples) / rankCount);
   int startId = rankId * batchSize;
   int endId = std::min((rankId + 1) * batchSize, static_cast<int>(nSamples));
 
   auto start = std::chrono::steady_clock::now();
 
-  upcxx::dist_object<upcxx::global_ptr<double>> partitions(upcxx::new_array<double>(nSamples));
+  upcxx::dist_object<upcxx::global_ptr<double>> partitions(
+      upcxx::new_array<double>(nSamples));
   upcxx::global_ptr<double> rootPartition = partitions.fetch(0).wait();
 
   upcxx::future<> futures = upcxx::make_future();

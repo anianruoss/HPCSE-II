@@ -27,12 +27,12 @@ int main(int argc, char *argv[]) {
   double *sampleArray;
 
   if (rankId == 0) {
-	  sampleArray = initializeSampler(nSamples, nParameters);
+    sampleArray = initializeSampler(nSamples, nParameters);
   } else {
-	  sampleArray = new double[nSamples*nParameters];
+    sampleArray = new double[nSamples * nParameters];
   }
 
-  MPI_Bcast(sampleArray, nSamples*nParameters, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+  MPI_Bcast(sampleArray, nSamples * nParameters, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
   double *resultsArray = (double *)calloc(nSamples, sizeof(double));
 
