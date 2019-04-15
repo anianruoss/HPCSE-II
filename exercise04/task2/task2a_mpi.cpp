@@ -24,7 +24,16 @@ int main(int argc, char *argv[]) {
   nSamples = NSAMPLES;
   nParameters = NPARAMETERS;
 
-  double *sampleArray = initializeSampler(nSamples, nParameters);
+  double *sampleArray;
+
+  if (rankId == 0) {
+	  sampleArray = initializeSampler(nSamples, nParameters);
+  } else {
+	  sampleArray = new double[nSamples*nParameters];
+  }
+
+  MPI_Bcast(sampleArray, nSamples*nParameters, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
   double *resultsArray = (double *)calloc(nSamples, sizeof(double));
 
   int batchSize = nSamples / rankCount;
