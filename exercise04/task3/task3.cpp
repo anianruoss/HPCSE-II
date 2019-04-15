@@ -16,87 +16,74 @@ size_t nParameters;
 upcxx::global_ptr<double> sampleArray;
 
 struct Consumer {
-  size_t sampleId;
-  double sample[NPARAMETERS];
+	size_t sampleId;
+	double sample[NPARAMETERS];
 
-  Consumer(size_t id) : sampleId(id) { getSample(sampleId, sample); }
+	Consumer(size_t id) : sampleId(id) { getSample(sampleId, sample); }
 
-  static std::pair<size_t, double> processSample(Consumer consumer) {
-    return {consumer.sampleId, evaluateSample(consumer.sample)};
-  }
+	static std::pair<size_t, double> processSample(Consumer consumer) {
+		return {consumer.sampleId, evaluateSample(consumer.sample)};
+	}
 };
 
+void processSample(size_t consumerId, size_t &sampleId, std::vector<upcxx::future<>> &futures) {
+	futures[consumerId] = upcxx::rpc(consumerId + 1, Consumer::processSample, Consumer {sampleId++})
+		.then([](std::pair<size_t, double> result) {
+				updateEvaluation(result.first, result.second);
+				});
+}
+
 int main(int argc, char *argv[]) {
-  upcxx::init();
-  rankId = upcxx::rank_me();
-  rankCount = upcxx::rank_n();
+	upcxx::init();
+	rankId = upcxx::rank_me();
+	rankCount = upcxx::rank_n();
 
-  nSamples = NSAMPLES;
-  nParameters = NPARAMETERS;
+	nSamples = NSAMPLES;
+	nParameters = NPARAMETERS;
 
-  if (rankId == 0) {
-    printf("Processing %ld Samples (24 initially available), each with %ld "
-           "Parameter(s)...\n",
-           nSamples, nParameters);
-    initializeSampler(nSamples, nParameters);
+	if (rankId == 0) {
+		printf("Processing %ld Samples (24 initially available), each with %ld "
+				"Parameter(s)...\n",
+				nSamples, nParameters);
+		initializeSampler(nSamples, nParameters);
 
-    // avoid having more consumers than available samples
-    assert(rankCount <= 25);
+		assert(1 < rankCount && rankCount < 26);
 
-    auto t0 = std::chrono::system_clock::now();
+		auto t0 = std::chrono::system_clock::now();
 
-    size_t sampleId = 0;
-    const size_t nConsumers = rankCount - 1;
+		const size_t nConsumers = rankCount - 1;
 
-    std::vector<upcxx::future<>> futures(rankCount);
+		std::vector<upcxx::future<>> futures(nConsumers);
+		size_t sampleId = 0;
 
-    for (size_t consumerId = 0; consumerId < nConsumers; ++consumerId) {
-      Consumer consumer(sampleId++);
+		for (size_t consumerId = 0; consumerId < nConsumers; ++consumerId) {
+			processSample(consumerId, sampleId, futures);
+		}
 
-      size_t rank = consumerId + 1;
+		while (sampleId < nSamples) {
+			for (size_t consumerId = 0; consumerId < nConsumers; ++consumerId) {
+				if (futures[consumerId].ready() && sampleId < nSamples) {
+					processSample(consumerId, sampleId, futures);
+				} else {
+					upcxx::progress();
+				}
+			}
+		}
 
-      futures[rank] = upcxx::rpc(rank, Consumer::processSample, consumer)
-                          .then([](std::pair<size_t, double> result) {
-                            updateEvaluation(result.first, result.second);
-                          });
-    }
+		upcxx::future<> conjoined_future = upcxx::make_future();
 
-    while (sampleId < nSamples) {
-      for (size_t consumerId = 0; consumerId < nConsumers; ++consumerId) {
-        if (nSamples <= sampleId) {
-          break;
-        }
+		for (size_t consumerId = 0; consumerId < nConsumers; ++consumerId) {
+			conjoined_future = upcxx::when_all(conjoined_future, futures[consumerId]);
+		}
+		conjoined_future.wait();
 
-        size_t rank = consumerId + 1;
+		auto t1 = std::chrono::system_clock::now();
 
-        if (futures[rank].ready()) {
-          Consumer consumer(sampleId++);
+		checkResults();
+		double evalTime = std::chrono::duration<double>(t1 - t0).count();
+		printf("Total Running Time: %.3fs\n", evalTime);
+	}
 
-          futures[rank] = upcxx::rpc(rank, Consumer::processSample, consumer)
-                              .then([](std::pair<size_t, double> result) {
-                                updateEvaluation(result.first, result.second);
-                              });
-        } else {
-          upcxx::progress();
-        }
-      }
-    }
-
-    upcxx::future<> conjoined_future = upcxx::make_future();
-
-    for (size_t consumerId = 0; consumerId < nConsumers; ++consumerId) {
-      size_t rank = consumerId + 1;
-      conjoined_future = upcxx::when_all(conjoined_future, futures[rank]);
-    }
-    conjoined_future.wait();
-
-    auto t1 = std::chrono::system_clock::now();
-
-    checkResults();
-    double evalTime = std::chrono::duration<double>(t1 - t0).count();
-    printf("Total Running Time: %.3fs\n", evalTime);
-  }
-
-  upcxx::finalize();
-  return 0;
+	upcxx::finalize();
+	return 0;
 }
