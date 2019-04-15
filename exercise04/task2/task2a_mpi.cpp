@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
   double *sampleArray;
 
   if (rankId == 0) {
-	  sampleArray = initializeSampler(nSamples, nParameters);
+    sampleArray = initializeSampler(nSamples, nParameters);
   } else {
 	  sampleArray = (double *)calloc(batchSize*nParameters, sizeof(double));
   }
