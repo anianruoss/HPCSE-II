@@ -1,4 +1,4 @@
 Verification Passed
-Total time:           1.56683
-Average time:         1.22636
-Load imbalance ratio: 0.217298
+Total time:           1.31032
+Average time:         1.17437
+Load imbalance ratio: 0.103757

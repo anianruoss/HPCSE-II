@@ -64,6 +64,8 @@ int main(int argc, char *argv[]) {
       Consumer consumer = consumers.front();
       consumers.pop();
 
+      upcxx::progress();
+
       if (consumer.future.ready()) {
         resultsArray[consumer.sampleId] = consumer.future.result();
 
@@ -90,7 +92,6 @@ int main(int argc, char *argv[]) {
 
       } else {
         consumers.push(consumer);
-        upcxx::progress();
       }
     }
 

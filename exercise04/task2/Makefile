@@ -15,8 +15,8 @@ $(BINARIES) : % : %.o $(OBJECTS)
 	$(CXX) -c $(CXXFLAGS) $< -o $@
 
 task2a_mpi: task2a_mpi.cpp $(OBJECTS)
-	mpicxx -cxx=icpc -c task2a_mpi.cpp
-	mpicxx -cxx=icpc -o task2a_mpi task2a_mpi.o sampler/sampler.o	
+	mpiicpc -c task2a_mpi.cpp
+	mpiicpc -o task2a_mpi task2a_mpi.o sampler/sampler.o	
 
 .PHONY: clean
 clean:
