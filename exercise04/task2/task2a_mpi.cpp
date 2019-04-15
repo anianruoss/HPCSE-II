@@ -34,12 +34,15 @@ int main(int argc, char *argv[]) {
   if (rankId == 0) {
     sampleArray = initializeSampler(nSamples, nParameters);
   } else {
-	  sampleArray = (double *)calloc(batchSize*nParameters, sizeof(double));
+    sampleArray = (double *)calloc(batchSize * nParameters, sizeof(double));
   }
 
-  MPI_Scatter(sampleArray, batchSize*nParameters, MPI_DOUBLE, rankId == 0 ? MPI_IN_PLACE : sampleArray, batchSize*nParameters, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+  MPI_Scatter(sampleArray, batchSize * nParameters, MPI_DOUBLE,
+              rankId == 0 ? MPI_IN_PLACE : sampleArray, batchSize * nParameters,
+              MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-  double *resultsArray = (double *)calloc(rankId == 0 ? nSamples : batchSize, sizeof(double));
+  double *resultsArray =
+      (double *)calloc(rankId == 0 ? nSamples : batchSize, sizeof(double));
 
   MPI_Barrier(MPI_COMM_WORLD);
 
@@ -49,7 +52,8 @@ int main(int argc, char *argv[]) {
     resultsArray[localId] = evaluateSample(&sampleArray[localId * nParameters]);
   }
 
-  MPI_Gather(rankId == 0 ? MPI_IN_PLACE : resultsArray, batchSize, MPI_DOUBLE, resultsArray, batchSize, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+  MPI_Gather(rankId == 0 ? MPI_IN_PLACE : resultsArray, batchSize, MPI_DOUBLE,
+             resultsArray, batchSize, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
   auto end = std::chrono::steady_clock::now();
 
