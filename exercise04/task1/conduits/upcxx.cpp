@@ -61,9 +61,8 @@ void Korali::Conduit::UPCXX::processSample(size_t sampleId) {
   // wait if last sample
   if (sampleId == nSamples - 1) {
     while (!futures.empty()) {
-      upcxx::future<size_t> future = futures.front();
+      futures.front().wait();
       futures.pop();
-      future.wait();
     }
   }
 }
