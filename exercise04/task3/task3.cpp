@@ -49,6 +49,7 @@ int main(int argc, char *argv[]) {
            nSamples, nParameters);
     initializeSampler(nSamples, nParameters);
 
+    // having more workers than initial samples makes no sense
     assert(1 < rankCount && rankCount < 26);
 
     auto t0 = std::chrono::system_clock::now();
