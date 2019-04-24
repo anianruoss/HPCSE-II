@@ -2,6 +2,7 @@
 
 \usepackage{amsmath}
 \usepackage{listings}
+\usepackage{hyperref}
 
 \setlength\parindent{0pt}
 
@@ -196,7 +197,7 @@
     Since not all samples are available at the beginning of the generation
     it does not make sense to have more ranks than initially available
     samples and we enforce this constraint with an assert.
-    Apart from that our approaches are similar to those from Task2b) and we
+    Apart from that our approaches are similar to those from Task 2b) and we
     display the results obtained from running the UPC++ and MPI
     implementations with 24 ranks on an Euler compute node in
     listings~\ref{lst:Task3UPCXX} and~\ref{lst:Task3MPI} respectively.
@@ -225,11 +226,148 @@
     called after the evaluation has completed on a consumer rank.
     This problem can be elegantly solved with the \textit{then()} method
     from UPC++ which executes a function on root after the RPC has completed.
-    Our MPI implementation is basically equivalent to that of Task2b) and
-    thus we refer to Task2b) for the discussion of the difference of the two
+    Our MPI implementation is basically equivalent to that of Task 2b) and
+    thus we refer to Task 2b) for the discussion of the difference of the two
     approaches.
     Using the $then()$ function is definitely more elegant than sending data
     back and forth as is required for MPI.\@
 
+    \section*{Task 4}
+    \label{sec:Task4}
+
+    To exploit full parallelism we increase the population size to 23 since
+    we have 23 consumer ranks and 1 producer rank.
+    We run Korali with the single conduit and display its output in
+    Listing~\ref{lst:Task4Single}.
+
+    \begin{lstlisting}[basicstyle=\tiny, frame=single, caption={Korali
+    output for the single conduit when running the code from Task 1 with
+    population size 23.}, label={lst:Task4Single}]
+    [Korali] Starting CMAES. Parameters: 17, Seed: 0xFFFFFFFFFFFFFFFF
+    ...
+    [Korali] Finished - Reason: Object variable changes < 1.00e-06
+    [Korali] Parameter 'Sigma' Value: 0.937782
+    [Korali] Parameter 'torch_1_x' Value: 0.251375
+    [Korali] Parameter 'torch_1_y' Value: 0.741905
+    [Korali] Parameter 'torch_1_intensity' Value: 0.414076
+    [Korali] Parameter 'torch_1_width' Value: 0.060000
+    [Korali] Parameter 'torch_2_x' Value: 0.242771
+    [Korali] Parameter 'torch_2_y' Value: 0.240310
+    [Korali] Parameter 'torch_2_intensity' Value: 0.435900
+    [Korali] Parameter 'torch_2_width' Value: 0.053473
+    [Korali] Parameter 'torch_3_x' Value: 0.760406
+    [Korali] Parameter 'torch_3_y' Value: 0.770098
+    [Korali] Parameter 'torch_3_intensity' Value: 0.590264
+    [Korali] Parameter 'torch_3_width' Value: 0.048075
+    [Korali] Parameter 'torch_4_x' Value: 0.756812
+    [Korali] Parameter 'torch_4_y' Value: 0.254229
+    [Korali] Parameter 'torch_4_intensity' Value: 0.501190
+    [Korali] Parameter 'torch_4_width' Value: 0.051603
+    [Korali] Total Elapsed Time: 441.061222s
+    \end{lstlisting}
+
+    Our UPC++ and MPI approaches are very similar to those of tasks 2b) and
+    3 and we display the results obtained from running the UPC++ and MPI
+    implementations with 24 ranks on an Euler compute node in
+    listings~\ref{lst:Task4UPCXX} and~\ref{lst:Task4MPI}.
+
+    \begin{lstlisting}[basicstyle=\tiny, frame=single, caption={Korali
+    output for the UPC++ conduit when running the code from Task 1 with
+    population size 23.}, label={lst:Task4UPCXX}]
+    [Korali] Starting CMAES. Parameters: 17, Seed: 0xFFFFFFFFFFFFFFFF
+    ...
+    [Korali] Finished - Reason: Object variable changes < 1.00e-06
+    [Korali] Parameter 'Sigma' Value: 0.937782
+    [Korali] Parameter 'torch_1_x' Value: 0.251375
+    [Korali] Parameter 'torch_1_y' Value: 0.741905
+    [Korali] Parameter 'torch_1_intensity' Value: 0.414076
+    [Korali] Parameter 'torch_1_width' Value: 0.060000
+    [Korali] Parameter 'torch_2_x' Value: 0.242771
+    [Korali] Parameter 'torch_2_y' Value: 0.240310
+    [Korali] Parameter 'torch_2_intensity' Value: 0.435900
+    [Korali] Parameter 'torch_2_width' Value: 0.053473
+    [Korali] Parameter 'torch_3_x' Value: 0.760406
+    [Korali] Parameter 'torch_3_y' Value: 0.770098
+    [Korali] Parameter 'torch_3_intensity' Value: 0.590264
+    [Korali] Parameter 'torch_3_width' Value: 0.048075
+    [Korali] Parameter 'torch_4_x' Value: 0.756812
+    [Korali] Parameter 'torch_4_y' Value: 0.254229
+    [Korali] Parameter 'torch_4_intensity' Value: 0.501190
+    [Korali] Parameter 'torch_4_width' Value: 0.051603
+    [Korali] Total Elapsed Time: 21.553523s
+    \end{lstlisting}
+
+    \begin{lstlisting}[basicstyle=\tiny, frame=single, caption={Korali
+    output for the MPI conduit when running the code from Task 1 with
+    population size 23.}, label={lst:Task4MPI}]
+    [Korali] Starting CMAES. Parameters: 17, Seed: 0xFFFFFFFFFFFFFFFF
+    ...
+    [Korali] Finished - Reason: Object variable changes < 1.00e-06
+    [Korali] Parameter 'Sigma' Value: 0.937782
+    [Korali] Parameter 'torch_1_x' Value: 0.251375
+    [Korali] Parameter 'torch_1_y' Value: 0.741905
+    [Korali] Parameter 'torch_1_intensity' Value: 0.414076
+    [Korali] Parameter 'torch_1_width' Value: 0.060000
+    [Korali] Parameter 'torch_2_x' Value: 0.242771
+    [Korali] Parameter 'torch_2_y' Value: 0.240310
+    [Korali] Parameter 'torch_2_intensity' Value: 0.435900
+    [Korali] Parameter 'torch_2_width' Value: 0.053473
+    [Korali] Parameter 'torch_3_x' Value: 0.760406
+    [Korali] Parameter 'torch_3_y' Value: 0.770098
+    [Korali] Parameter 'torch_3_intensity' Value: 0.590264
+    [Korali] Parameter 'torch_3_width' Value: 0.048075
+    [Korali] Parameter 'torch_4_x' Value: 0.756812
+    [Korali] Parameter 'torch_4_y' Value: 0.254229
+    [Korali] Parameter 'torch_4_intensity' Value: 0.501190
+    [Korali] Parameter 'torch_4_width' Value: 0.051603
+    [Korali] Total Elapsed Time: 22.081863s
+    \end{lstlisting}
+
+    We observe that the results are identical for all three conduits and
+    that UPC++ achieves a speedup of $\approx 20.5$ with efficiency
+    $\approx 85.5\%$ whereas MPI achieves a speedup of $\approx 20$ with
+    efficiency $\approx 83\%$.
+    Both implementations thus exceed the requirement of being at least 10x
+    faster while producing results similar to those of the single conduit,
+    implying that the CEO of the company will give us a raise.
+
+    As mentioned above both approaches were similar to those of tasks 2b)
+    and 3 as they also implemented the producer-consumer strategy and thus
+    both approaches could be easily adapted to the current task.
+    However, for UPC++ we faced the new challenge that the number of
+    parameters is not known beforehand meaning that we cannot use the consumer
+    struct from Task 3 as its sample array would have to be allocated
+    dynamically.
+    We can solve this problem by simply using the local pointer of the
+    global sampleArrayPointer to access the sample data from every consumer
+    rank.
+    The MPI implementation for this task is basically identical to that of
+    tasks 2b) and 3 with the only notable difference being that we send the
+    dummy message which implies that all samples have been processed after
+    all generations have been evaluated and not after all samples of a
+    single generation have been evaluated.
+    The most difficult part of the MPI conduit implementation is the
+    integration with Korali which is described below:
+
+    \begin{itemize}
+        \item load the required modules and set the environment variables
+        \begin{lstlisting}[basicstyle=\footnotesize]
+    module load new
+    module load gcc/6.3.0
+    module load intel/2018.1
+    module load impi/2018.1.163
+
+    export UPCXX_GASNET_CONDUIT=smp
+    export UPCXX_THREADMODE=seq
+    export UPCXX_CODEMODE=O3
+    export KORALI_CONDUIT=single
+        \end{lstlisting}
+        \item replace single.cpp with mpi.cpp
+        \item replace the Makefile in the conduits directory
+        with this
+        \href{https://github.com/anianruoss/HPCSE-II/blob/master/exercise04/task1/conduits/Makefile_MPI}{Makefile}
+        \item replace the Makefile in the task1 directory with this
+        \href{https://github.com/anianruoss/HPCSE-II/blob/master/exercise04/task1/Makefile_MPI}{Makefile}
+    \end{itemize}
 
 \end{document}
