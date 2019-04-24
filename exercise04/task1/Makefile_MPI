@@ -1,0 +1,26 @@
+CXX=upcxx
+LDFLAGS  += -L../korali/lib
+LDLIBS += -lkorali -lgsl -lgslcblas  
+CXXFLAGS += -I../korali/include -I../korali/include/gsl -O3 -g -std=c++17 -Wall -Wfatal-errors
+BINARIES = task1_n4
+OBJECTS  = model/heat2d.o conduits/single.o conduits/upcxx.o
+
+.SECONDARY:
+.PHONY: all
+all: task1_n4
+
+task1_n4: $(OBJECTS) 
+	upcxx -o $@ $(CXXFLAGS) $(LDFLAGS) task1_n4.cpp $^ $(LDLIBS) -I/cluster/apps/intel/parallel_studio_xe_2018_r1/compilers_and_libraries_2018.1.163/linux/mpi/intel64/include -L/cluster/apps/intel/parallel_studio_xe_2018_r1/compilers_and_libraries_2018.1.163/linux/mpi/intel64/lib/release_mt -L/cluster/apps/intel/parallel_studio_xe_2018_r1/compilers_and_libraries_2018.1.163/linux/mpi/intel64/lib -Xlinker --enable-new-dtags -Xlinker -rpath -Xlinker /cluster/apps/intel/parallel_studio_xe_2018_r1/compilers_and_libraries_2018.1.163/linux/mpi/intel64/lib/release_mt -Xlinker -rpath -Xlinker /cluster/apps/intel/parallel_studio_xe_2018_r1/compilers_and_libraries_2018.1.163/linux/mpi/intel64/lib -Xlinker -rpath -Xlinker /opt/intel/mpi-rt/2017.0.0/intel64/lib/release_mt -Xlinker -rpath -Xlinker /opt/intel/mpi-rt/2017.0.0/intel64/lib -lmpifort -lmpi -lmpigi -ldl -lrt -lpthread
+
+
+model/%.o:
+	$(MAKE) -C model all
+
+conduits/%.o:
+	$(MAKE) -C conduits all
+
+.PHONY: clean
+clean:
+	$(MAKE) -C model clean
+	$(MAKE) -C conduits clean
+	$(RM) $(BINARIES) *.o *.ti *.optrpt *.txt
