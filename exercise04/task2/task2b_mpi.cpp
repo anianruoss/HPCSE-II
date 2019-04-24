@@ -2,6 +2,7 @@
 #include <cassert>
 #include <chrono>
 #include <cmath>
+#include <iostream>
 #include <mpi.h>
 #include <numeric>
 #include <stdio.h>
@@ -50,14 +51,11 @@ int main(int argc, char *argv[]) {
   nSamples = NSAMPLES;
   nParameters = NPARAMETERS;
   const size_t nConsumers = rankCount - 1;
-  std::vector<double> consumerTimes(nConsumers);
-
-  double *sampleArray;
-  double *resultsArray;
 
   if (rankId == 0) {
-    sampleArray = initializeSampler(nSamples, nParameters);
-    resultsArray = (double *)calloc(nSamples, sizeof(double));
+    double *sampleArray = initializeSampler(nSamples, nParameters);
+    double *resultsArray = (double *)calloc(nSamples, sizeof(double));
+    std::vector<double> consumerTimes(nConsumers);
 
     auto start = std::chrono::steady_clock::now();
 
@@ -84,6 +82,19 @@ int main(int argc, char *argv[]) {
       MPI_Send(&dummy, 1, MPI_DOUBLE, rank, 0, MPI_COMM_WORLD);
     }
 
+    checkResults(resultsArray);
+
+    double totalTime =
+        *std::max_element(consumerTimes.begin(), consumerTimes.end());
+    double averageTime =
+        std::accumulate(consumerTimes.begin(), consumerTimes.end(), 0.) /
+        nConsumers;
+
+    std::cout << "Total time:           " << totalTime << std::endl;
+    std::cout << "Average time:         " << averageTime << std::endl;
+    std::cout << "Load imbalance ratio: "
+              << (totalTime - averageTime) / totalTime << std::endl;
+
   } else {
     bool done = false;
 
@@ -106,23 +117,6 @@ int main(int argc, char *argv[]) {
       }
 
     } while (!done);
-  }
-
-  MPI_Barrier(MPI_COMM_WORLD);
-
-  if (rankId == 0) {
-    checkResults(resultsArray);
-
-    double totalTime =
-        *std::max_element(consumerTimes.begin(), consumerTimes.end());
-    double averageTime =
-        std::accumulate(consumerTimes.begin(), consumerTimes.end(), 0.) /
-        nConsumers;
-
-    std::cout << "Total time:           " << totalTime << std::endl;
-    std::cout << "Average time:         " << averageTime << std::endl;
-    std::cout << "Load imbalance ratio: "
-              << (totalTime - averageTime) / totalTime << std::endl;
   }
 
   MPI_Finalize();
