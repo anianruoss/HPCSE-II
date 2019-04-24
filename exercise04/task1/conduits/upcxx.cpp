@@ -4,7 +4,7 @@
 
 extern Korali::Solver::Base *_solver;
 extern Korali::Problem::Base *_problem;
-extern double* _sampleArrayPointer;
+extern double *_sampleArrayPointer;
 
 int rankId;
 int rankCount;
