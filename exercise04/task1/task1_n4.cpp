@@ -66,8 +66,7 @@ int main(int argc, char *argv[]) {
 
   auto solver = Korali::Solver::CMAES(&problem);
 
-  // int Ng = 2000; // max generations for CMAES
-  int Ng = 1e6; // max generations for CMAES
+  int Ng = 2000; // max generations for CMAES
 
   solver.setStopMinDeltaX(1e-6);
   // solver.setPopulationSize(8); // ~4+3*log(N)
