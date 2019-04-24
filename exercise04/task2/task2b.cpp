@@ -30,12 +30,21 @@ int main(int argc, char *argv[]) {
   nSamples = NSAMPLES;
   nParameters = NPARAMETERS;
 
-  double *sampleArray = initializeSampler(nSamples, nParameters);
-  double *resultsArray = (double *)calloc(nSamples, sizeof(double));
+  double *sampleArray;
+
+  if (rankId == 0) {
+    sampleArray = initializeSampler(nSamples, nParameters);
+  } else {
+    sampleArray = new double[nSamples * nParameters];
+  }
+
+  upcxx::broadcast(sampleArray, nSamples * nParameters, 0).wait();
+
 
   if (rankId == 0) {
     printf("Processing %ld Samples each with %ld Parameter(s)...\n", nSamples,
            nParameters);
+    double *resultsArray = (double *)calloc(nSamples, sizeof(double));
 
     auto start = std::chrono::steady_clock::now();
 
