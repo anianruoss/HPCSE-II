@@ -4,7 +4,6 @@
 
 extern Korali::Solver::Base *_solver;
 extern Korali::Problem::Base *_problem;
-extern double *_sampleArrayPointer;
 
 int rankId;
 int rankCount;
@@ -17,25 +16,12 @@ Korali::Conduit::UPCXX::UPCXX(Korali::Solver::Base *solver)
 
 std::queue<upcxx::future<size_t>> futures;
 
-struct Consumer {
-  double *sample = (double *)calloc(nParameters, sizeof(double));
-  size_t sampleId;
-
-  Consumer(size_t id) : sampleId(id) {
-    std::copy(&sampleArrayPointer.local()[nParameters * sampleId],
-              &sampleArrayPointer.local()[nParameters * (sampleId + 1)],
-              sample);
-  }
-
-  static std::tuple<size_t, size_t, double> evaluateSample(Consumer consumer) {
-    return {rankId, consumer.sampleId,
-            _problem->evaluateSample(consumer.sample)};
-  }
-};
-
 void enqueueFuture(size_t rank, size_t sampleId) {
-  futures.push(upcxx::rpc(rank, Consumer::evaluateSample, Consumer{sampleId})
-                   .then([](std::tuple<size_t, size_t, double> result) {
+  futures.push(
+          upcxx::rpc(rank, [](size_t sampleId) {
+              return std::make_tuple(rankId, sampleId, 
+             _problem->evaluateSample(&(sampleArrayPointer.local()[sampleId*nParameters])) );
+  }, sampleId).then([](std::tuple<size_t, size_t, double> result) {
                      _solver->updateEvaluation(std::get<1>(result),
                                                std::get<2>(result));
                      return std::get<0>(result);
@@ -66,7 +52,7 @@ void Korali::Conduit::UPCXX::processSample(size_t sampleId) {
       } while (!done);
   }
 
-  // wait if last sample
+  // wait if last sample of generation
   if (sampleId == nSamples - 1) {
     while (!futures.empty()) {
       futures.front().wait();
@@ -87,9 +73,10 @@ void Korali::Conduit::UPCXX::run() {
     sampleArrayPointer = upcxx::new_array<double>(nSamples * nParameters);
   }
   upcxx::broadcast(&sampleArrayPointer, 1, 0).wait();
+  upcxx::barrier();
+
 
   if (rankId == 0) {
-    _sampleArrayPointer = sampleArrayPointer.local();
     _solver->runSolver();
   }
 
