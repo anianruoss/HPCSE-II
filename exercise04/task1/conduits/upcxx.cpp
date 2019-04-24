@@ -43,20 +43,27 @@ void enqueueFuture(size_t rank, size_t sampleId) {
 }
 
 void Korali::Conduit::UPCXX::processSample(size_t sampleId) {
+    
   if (futures.size() < rankCount - 1) {
     enqueueFuture(sampleId + 1, sampleId);
   } else {
-    upcxx::future<size_t> future = futures.front();
-    futures.pop();
+      bool done = false;
 
-    upcxx::progress();
+      do {
+          upcxx::future<size_t> future = futures.front();
+          futures.pop();
 
-    if (future.ready()) {
-      size_t rank = future.result();
-      enqueueFuture(rank, sampleId);
-    } else {
-      futures.push(future);
-    }
+          upcxx::progress();
+
+          if (future.ready()) {
+              size_t rank = future.result();
+              enqueueFuture(rank, sampleId);
+              done = true;
+          } else {
+              futures.push(future);
+          }
+
+      } while (!done);
   }
 
   // wait if last sample
