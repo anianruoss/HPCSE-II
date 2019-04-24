@@ -4,6 +4,7 @@
 
 extern Korali::Solver::Base *_solver;
 extern Korali::Problem::Base *_problem;
+extern double* _sampleArrayPointer;
 
 int rankId;
 int rankCount;
@@ -81,6 +82,7 @@ void Korali::Conduit::UPCXX::run() {
   upcxx::broadcast(&sampleArrayPointer, 1, 0).wait();
 
   if (rankId == 0) {
+    _sampleArrayPointer = sampleArrayPointer.local();
     _solver->runSolver();
   }
 
