@@ -40,7 +40,6 @@ int main(int argc, char *argv[]) {
 
   upcxx::broadcast(sampleArray, nSamples * nParameters, 0).wait();
 
-
   if (rankId == 0) {
     printf("Processing %ld Samples each with %ld Parameter(s)...\n", nSamples,
            nParameters);
