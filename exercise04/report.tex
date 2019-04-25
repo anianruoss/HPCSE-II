@@ -28,17 +28,17 @@
         \item $\text{beam width} \in [0.04, 0.06]$ for all torches
     \end{itemize}
     Since we do not have any additional information about the parameter
-    distributions, we model all parameters as uniformly distributed
-    between within their respective bounds.
+    distributions, we model all parameters as being uniformly distributed
+    within their respective bounds.
     We employ Korali's CMA-ES solver to maximize the posterior
-    distribution of the parameters (even though we don't really have prior
-    distributions, but the posterior was given in the template) to find the
-    optimal parameter values and we display the results in
-    Listing~\ref{lst:Task1}.
+    distribution of the parameters (even though we don't really have
+    informative prior distributions, but the posterior was given in the
+    template) to find the most likely parameter values and we display the
+    results in Listing~\ref{lst:Task1}.
 
     \begin{lstlisting}[basicstyle=\tiny, frame=single, caption={Korali
-    output when maximizing the likelihood of the heat distribution given the
-    model with four candles.}, label={lst:Task1}]
+    output when maximizing the posterior distribution of the parameters for
+    the model with four robotic torches.}, label={lst:Task1}]
     [Korali] Starting CMAES. Parameters: 17, Seed: 0xFFFFFFFFFFFFFFFF
     ...
     [Korali] Finished - Reason: Object variable changes < 1.00e-06
@@ -68,7 +68,7 @@
     achieved by parallelizing the two for-loops at lines 11 and 14.
     Typically the evaluation is a lot more costly than random
     number generation, which is why we should already observe a considerable
-    speedup when only parallelizing the loop at line 14.
+    speedup from only parallelizing the loop at line 14.
 
     \section*{Task 2}
     \label{sec:Task2}
@@ -117,9 +117,13 @@
     $\approx 94.5\%$ for MPI.\@
     Both implementations suffer from a relatively high load imbalance ratio
     ($\approx 0.145$ for UPC++ and $\approx 0.105$ for MPI) which results
-    from the fluctuation in evaluation times.
-    The MPI approach is practically identical to the UPC++ code but the
-    collective operations in MPI allow for a much cleaner implementation.
+    from the fluctuation in evaluation times and the static distribution
+    schedule.
+    The MPI approach is practically identical to that employed for the UPC++
+    code but the collective operations in MPI allow for a much cleaner
+    implementation (especially using \textit{MPI\_Scatter} since it eliminates
+    the need to care about the global sample index of sample that is processed
+    locally on a given rank).
     In general, MPI feels more natural since it requires very explicit
     communication.
 
@@ -161,8 +165,11 @@
     $\approx 93.5\%$), whereas for the MPI implementation the total running
     time increases marginally (speedup: $\approx 22.5$, efficiency:
     $\approx 93.5\%$).
-    Whereas the MPI implementation outperformed UPC++ for the
-    divide-and-conquer strategy, they are now practically identical.
+    We take this as evidence that the UPC++ implementation has successfully
+    solved the load imbalance problem.
+    Even though the load imbalance has also dropped for MPI, the
+    producer-consumer strategy requires a lot more communication which explains
+    the slightly higher running time.
     The MPI approach differs slightly from the UPC++ approach:
     \begin{itemize}
         \item UPC++ employs a queue of consumers which contain a future among
@@ -176,10 +183,11 @@
         rank that the evaluation has completed once all samples have been
         processed.
     \end{itemize}
-    Even though we were told that the producer-consumer problem would be
-    easier to implement in UPC++ than in MPI, the MPI approach feels cleaner
-    as it is more explicit\footnote{From \emph{The Zen of Python, by Tim
-    Peters}: ``Explicit is better than implicit.``.}.
+    In general one can say that UPC++ is more suited for the implementation
+    of the producer-consumer problem.
+    Nevertheless, the MPI approach feels cleaner as its communication is more
+    explicit\footnote{From \emph{The Zen of Python, by Tim Peters}:
+    ``Explicit is better than implicit.``.}.
 
     \section*{Task 3}
     \label{sec:Task3}
@@ -220,15 +228,16 @@
     We observe speedups of $\approx 21.5$ for UPC++ and $\approx 22.5$ for
     MPI and correspondingly efficiencies of $\approx 90.5\%$ for UPC++ and
     $\approx 93.5\%$ for MPI.\@
-    One challenge we faced during the implementation of this exercise is
-    that \mbox{\textit{getSample()}} and \mbox{\textit{updateEvaluation()}}
-    have to be called from the root rank and that updateEvaluation has to be
-    called after the evaluation has completed on a consumer rank.
+    For the UPC++ implementation we faced the challenge that
+    \mbox{\textit{getSample()}} and \mbox{\textit{updateEvaluation()}}
+    have to be called from the root rank and that
+    \mbox{\textit{updateEvaluation()}} has to be called after the evaluation
+    has completed on a consumer rank.
     This problem can be elegantly solved with the \textit{then()} method
-    from UPC++ which executes a function on root after the RPC has completed.
+    from UPC++.
     Our MPI implementation is basically equivalent to that of Task 2b) and
-    thus we refer to Task 2b) for the discussion of the difference of the two
-    approaches.
+    thus we refer to Task 2b) for a discussion of the differences between
+    the UPC++ and MPI approaches.
     Using the $then()$ function is definitely more elegant than sending data
     back and forth as is required for MPI.\@
 
@@ -330,22 +339,22 @@
     Both implementations thus exceed the requirement of being at least 10x
     faster while producing results similar to those of the single conduit,
     implying that the CEO of the company will give us a raise.
-
-    As mentioned above both approaches were similar to those of tasks 2b)
-    and 3 as they also implemented the producer-consumer strategy and thus
-    both approaches could be easily adapted to the current task.
+    As mentioned above, both approaches are similar to those of tasks 2b)
+    and 3 and can thus be easily adapted to the current task.
     However, for UPC++ we faced the new challenge that the number of
-    parameters is not known beforehand meaning that we cannot use the consumer
-    struct from Task 3 as its sample array would have to be allocated
-    dynamically.
-    We can solve this problem by simply using the local pointer of the
-    global sampleArrayPointer to access the sample data from every consumer
-    rank.
+    parameters is not given as a constant.
+    Consequently, we cannot use the \textit{Consumer} struct from Task 3 as
+    its sample array would have to be allocated dynamically, which in turn
+    means that \textit{Consumer} is not trivially copyable anymore.
+    With UPC++ we can solve this problem by simply using the local pointer of
+    the global sampleArrayPointer to access the sample data from every
+    consumer rank.
     The MPI implementation for this task is basically identical to that of
-    tasks 2b) and 3 with the only notable difference being that we send the
-    dummy message which implies that all samples have been processed after
-    all generations have been evaluated and not after all samples of a
-    single generation have been evaluated.
+    tasks 2b) and 3.
+    For this reason, we refer to Task 2b) for a discussion on the difference
+    between the implementations.
+    As for Task 3, it was relatively easy to adapt the implementations to
+    the current task for both frameworks.
     The most difficult part of the MPI conduit implementation is the
     integration with Korali which is described below:
 
