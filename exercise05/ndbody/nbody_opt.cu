@@ -49,7 +49,7 @@ __global__ void forceKernel(double *xPos, double *yPos, double *zPos,
       double zDist = z_mIdx - z[i];
 
       double r = rsqrt(xDist * xDist + yDist * yDist + zDist * zDist + 1e-16);
-      double tmp = m_mIdx * m[i] * (r * r * r);
+      double tmp = m[i] * (r * r * r);
 
       x_force += xDist * tmp;
       y_force += yDist * tmp;
@@ -59,9 +59,9 @@ __global__ void forceKernel(double *xPos, double *yPos, double *zPos,
     __syncthreads();
   }
 
-  xFor[mIdx] = x_force;
-  yFor[mIdx] = y_force;
-  zFor[mIdx] = z_force;
+  xFor[mIdx] = x_force * m_mIdx;
+  yFor[mIdx] = y_force * m_mIdx;
+  zFor[mIdx] = z_force * m_mIdx;
 }
 
 int main(int argc, char *argv[]) {
