@@ -20,8 +20,6 @@ __global__ void forceKernel(double *xPos, double *yPos, double *zPos,
                             double *zFor, size_t N) {
   size_t mIdx = blockIdx.x * blockDim.x + threadIdx.x;
 
-  // assume that N / BLOCKSIZE is a natural number
-
   __shared__ double x[BLOCKSIZE];
   __shared__ double y[BLOCKSIZE];
   __shared__ double z[BLOCKSIZE];
@@ -44,16 +42,18 @@ __global__ void forceKernel(double *xPos, double *yPos, double *zPos,
 
     __syncthreads();
 
+#pragma unroll 16
     for (size_t i = 0; i < BLOCKSIZE; ++i) {
       double xDist = x_mIdx - x[i];
       double yDist = y_mIdx - y[i];
       double zDist = z_mIdx - z[i];
 
       double r = rsqrt(xDist * xDist + yDist * yDist + zDist * zDist + 1e-16);
+      double tmp = m_mIdx * m[i] * (r * r * r);
 
-      x_force += xDist * m_mIdx * m[i] * (r * r * r);
-      y_force += yDist * m_mIdx * m[i] * (r * r * r);
-      z_force += zDist * m_mIdx * m[i] * (r * r * r);
+      x_force += xDist * tmp;
+      y_force += yDist * tmp;
+      z_force += zDist * tmp;
     }
 
     __syncthreads();
