@@ -123,8 +123,8 @@ int main(int argc, char *argv[]) {
   for (size_t i = 0; i < N; i++)
     absForce += abs(xFor[i] + yFor[i] + zFor[i]);
 
-  printf("     Net Force: %.6f\n", netForce);
-  printf("Absolute Force: %.6f\n", absForce);
+  printf("     Net Force: %.12f\n", netForce);
+  printf("Absolute Force: %.12f\n", absForce);
 
   if (isfinite(netForce) == false) {
     printf("Verification Failed: Net force is not a finite value!\n");

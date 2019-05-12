@@ -11,23 +11,57 @@
 #include <math.h>
 #include <stdio.h>
 
+#define BLOCKSIZE 1024
+
 void checkCUDAError(const char *msg);
 
 __global__ void forceKernel(double *xPos, double *yPos, double *zPos,
                             double *mass, double *xFor, double *yFor,
                             double *zFor, size_t N) {
-  size_t m = blockIdx.x * blockDim.x + threadIdx.x;
+  size_t mIdx = blockIdx.x * blockDim.x + threadIdx.x;
 
-  for (size_t i = 0; i < N; i++)
-    if (i != m) {
-      double xDist = xPos[m] - xPos[i];
-      double yDist = yPos[m] - yPos[i];
-      double zDist = zPos[m] - zPos[i];
-      double r = sqrt(xDist * xDist + yDist * yDist + zDist * zDist);
-      xFor[m] += xDist * mass[m] * mass[i] / (r * r * r);
-      yFor[m] += yDist * mass[m] * mass[i] / (r * r * r);
-      zFor[m] += zDist * mass[m] * mass[i] / (r * r * r);
+  // assume that N / BLOCKSIZE is a natural number
+
+  __shared__ double x[BLOCKSIZE];
+  __shared__ double y[BLOCKSIZE];
+  __shared__ double z[BLOCKSIZE];
+  __shared__ double m[BLOCKSIZE];
+
+  double x_force = 0;
+  double y_force = 0;
+  double z_force = 0;
+
+  double x_mIdx = xPos[mIdx];
+  double y_mIdx = yPos[mIdx];
+  double z_mIdx = zPos[mIdx];
+  double m_mIdx = mass[mIdx];
+
+  for (size_t b = 0; b < N; b += BLOCKSIZE) {
+    x[threadIdx.x] = xPos[b + threadIdx.x];
+    y[threadIdx.x] = yPos[b + threadIdx.x];
+    z[threadIdx.x] = zPos[b + threadIdx.x];
+    m[threadIdx.x] = mass[b + threadIdx.x];
+
+    __syncthreads();
+
+    for (size_t i = 0; i < BLOCKSIZE; ++i) {
+      double xDist = x_mIdx - x[i];
+      double yDist = y_mIdx - y[i];
+      double zDist = z_mIdx - z[i];
+
+      double r = rsqrt(xDist * xDist + yDist * yDist + zDist * zDist + 1e-16);
+
+      x_force += xDist * m_mIdx * m[i] * (r * r * r);
+      y_force += yDist * m_mIdx * m[i] * (r * r * r);
+      z_force += zDist * m_mIdx * m[i] * (r * r * r);
     }
+
+    __syncthreads();
+  }
+
+  xFor[mIdx] = x_force;
+  yFor[mIdx] = y_force;
+  zFor[mIdx] = z_force;
 }
 
 int main(int argc, char *argv[]) {
@@ -98,7 +132,7 @@ int main(int argc, char *argv[]) {
   checkCUDAError("Failed Initial Conditions Memcpy");
 
   // Calculating Kernel Geometry
-  size_t threadsPerBlock = 1024;
+  size_t threadsPerBlock = BLOCKSIZE;
   size_t blocksPerGrid = ceil(double(((double)N) / ((double)threadsPerBlock)));
 
   // Running Force-calculation kernel
@@ -123,8 +157,8 @@ int main(int argc, char *argv[]) {
   for (size_t i = 0; i < N; i++)
     absForce += abs(xFor[i] + yFor[i] + zFor[i]);
 
-  printf("     Net Force: %.6f\n", netForce);
-  printf("Absolute Force: %.6f\n", absForce);
+  printf("     Net Force: %.12f\n", netForce);
+  printf("Absolute Force: %.12f\n", absForce);
 
   if (isfinite(netForce) == false) {
     printf("Verification Failed: Net force is not a finite value!\n");
