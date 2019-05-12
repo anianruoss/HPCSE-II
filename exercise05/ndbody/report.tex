@@ -1,0 +1,87 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{xfrac}
+
+\usepackage{listings}
+\usepackage{hyperref}
+
+\setlength\parindent{0pt}
+
+\begin{document}
+    \title{HPCSE II - Exercise 5}
+    \author{Anian Ruoss}
+    \maketitle
+
+    \section*{Task 2}
+    \label{sec:Task2}
+
+    The results from running \texttt{nbody\_naive.cu} (with increased output
+    precision for verification) are displayed in Listing~\ref{lst:Naive}.
+
+    \begin{lstlisting}[basicstyle=\scriptsize, frame=single, caption={Output
+    from running \texttt{nbody\_naive.cu}.}, label={lst:Naive}]
+        Net Force: 0.000000139824
+        Absolute Force: 66480053.035935938358
+        Time: 16.09551728s
+    \end{lstlisting}
+
+    We apply the following optimizations:
+    \begin{itemize}
+        \item We introduce the temporary variables \texttt{x\_force},
+        \texttt{y\_force}, and \texttt{z\_force} to reduce the number of
+        writes to global memory from $\mathcal{O} \left( N \right)$ to
+        $\mathcal{O} \left( 1 \right)$ per thread.
+        \item We introduce the temporary variables \texttt{x\_mIdx},
+        \texttt{y\_mIdx}, \texttt{z\_mIdx}, and \texttt{m\_mIdx} to reduce
+        the number of reads from global memory from
+        $\mathcal{O} \left( N \right)$ to $\mathcal{O} \left( 1 \right)$ per
+        thread.
+        \item We create the arrays \texttt{x}, \texttt{y}, \texttt{z}, and
+        \texttt{m} of size \texttt{BLOCKSIZE} in shared memory.
+        This amounts to $\texttt{BLOCKSIZE} \cdot 4 \cdot 8$ bytes $\approx$
+        $32$ kilobytes of shared memory which is still below the total amount
+        of shared memory per block of 49152 bytes (obtained by running
+        \texttt{deviceQuery.cpp} from
+        \url{https://github.com/NVIDIA/cuda-samples/blob/master/Samples/deviceQuery/deviceQuery.cpp}
+        ).
+        As a consequence, we reduce the number of reads from global memory
+        from $\mathcal{O} \left( \texttt{BLOCKSIZE} \cdot N \right)$ to
+        $\mathcal{O} \left( N \right)$ per block.
+        \item We replace $\sfrac{1}{\texttt{sqrt}\left( \ldots \right)}$ with
+        a call to \texttt{rsqrt}$\left( \ldots \right)$ which puts less
+        pressure on the ALUs.
+        \item We move the multiplication with \texttt{m\_mIdx} out of the
+        for-loops due to distributivity of multiplication and addition.
+        \item We add $10^{-16}$ to the sum of squared distances to avoid
+        dividing by zero for the case $i = m$ thereby also avoiding divergence.
+        \item We introduce the temporary variable \texttt{tmp} to avoid
+        computing the same term three times.
+        \item We unroll the inner loop.
+    \end{itemize}
+
+    All optimizations were fairly straightforward to implement and we present
+    the output of our optimized solver in Listing~\ref{lst:Optimized}.
+
+    \begin{lstlisting}[basicstyle=\scriptsize, frame=single, caption={Output
+    from running \texttt{nbody\_opt.cu}.}, label={lst:Optimized}]
+        Net Force: 0.000000144482
+        Absolute Force: 66480053.035935945809
+        Time: 2.23435090s
+    \end{lstlisting}
+
+    Comparing listings~\ref{lst:Naive} and~\ref{lst:Optimized} we observe that
+    the net and absolute forces are identical (up to an acceptable tolerance)
+    with a speedup of $\approx 7.2$.\\
+
+    A note on correctness: since the task asks for the optimization of the
+    given N-Body solver without changing the problem size we do not
+    explicitly handle the case where the problem size $N$ is not evenly
+    divisible by the number of threads per block\footnote{We also note that
+    \texttt{nbody\_naive.cu} does not handle this case either.}.
+    However, our code can easily be extended for this purpose by enclosing
+    the accesses to global memory on lines $38 - 41$ with
+    \texttt{if (b + threadIdx.x < N)} and by adding
+    \texttt{if (N <= b + i) continue;} to line 47.
+
+\end{document}
