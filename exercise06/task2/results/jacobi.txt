@@ -1,0 +1,28 @@
+class08@daint107:~/HPCSE-II/exercise06/task2> srun -C gpu -n 16 ./jacobi
+srun: job 14359072 queued and waiting for resources
+srun: job 14359072 has been allocated resources
+Execution Times:
+  Compute:     1.4346s
+  MPI_Irecv:   0.0003s
+  MPI_Isend:   0.1072s
+  Packing:     0.0000s
+  Unpacking:   0.0000s
+  MPI_Waitall: 0.2439s
+---------------------
+Total Time:    1.7893s
+L2 Norm:       0.9830745737
+
+class08@daint105:~/HPCSE-II/exercise06/task2> srun -C gpu -n 4 -c 4 ./jacobi
+srun: job 14360649 queued and waiting for resources
+srun: job 14360649 has been allocated resources
+Execution Times:
+  Compute:     4.4974s
+  MPI_Irecv:   0.0002s
+  MPI_Isend:   0.1613s
+  Packing:     0.0000s
+  Unpacking:   0.0000s
+  MPI_Waitall: 0.2121s
+---------------------
+Total Time:    4.8718s
+L2 Norm:       0.9830745737
+
