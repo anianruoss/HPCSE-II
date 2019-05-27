@@ -7,6 +7,7 @@
 
 #include <math.h>
 #include <mpi.h>
+#include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -110,6 +111,7 @@ int main(int argc, char *argv[]) {
   double t_end = MPI_Wtime();
 
   for (int iter = 0; iter < nIters; iter++) {
+#pragma omp parallel for collapse(3)
     for (int k = 1; k <= nz; k++)
       for (int j = 1; j <= ny; j++)
         for (int i = 1; i <= nx; i++) {
