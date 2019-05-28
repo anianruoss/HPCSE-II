@@ -1,0 +1,51 @@
+Sender: LSF System <lsfadmin@eu-c7-077-11>
+Subject: Job 92032498: <unset LSB_AFFINITY_HOSTFILE; OMP_NUM_THREADS=12 mpirun -n 4 --map-by node:PE=12 --report-bindings ./jacobi_opt> in cluster <euler> Done
+
+Job <unset LSB_AFFINITY_HOSTFILE; OMP_NUM_THREADS=12 mpirun -n 4 --map-by node:PE=12 --report-bindings ./jacobi_opt> was submitted from host <eu-login-22-ng> by user <anruoss> in cluster <euler> at Tue May 28 16:22:32 2019
+Job was executed on host(s) <24*eu-c7-077-11>, in queue <normal.4h>, as user <anruoss> in cluster <euler> at Tue May 28 16:22:45 2019
+                            <24*eu-c7-077-02>
+</cluster/home/anruoss> was used as the home directory.
+</cluster/home/anruoss/HPCSE-II/exercise06/task2> was used as the working directory.
+Started at Tue May 28 16:22:45 2019
+Terminated at Tue May 28 16:23:16 2019
+Results reported at Tue May 28 16:23:16 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+unset LSB_AFFINITY_HOSTFILE; OMP_NUM_THREADS=12 mpirun -n 4 --map-by node:PE=12 --report-bindings ./jacobi_opt
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   342.78 sec.
+    Max Memory :                                 7104 MB
+    Average Memory :                             3551.00 MB
+    Total Requested Memory :                     49152.00 MB
+    Delta Memory :                               42048.00 MB
+    Max Swap :                                   -
+    Max Processes :                              5
+    Max Threads :                                36
+    Run time :                                   56 sec.
+    Turnaround time :                            44 sec.
+
+The output (if any) follows:
+
+[eu-c7-077-11:35178] SETTING BINDING TO CORE
+[eu-c7-077-11:35178] MCW rank 0 bound to socket 0[core 0[hwt 0-1]], socket 0[core 1[hwt 0-1]], socket 0[core 2[hwt 0-1]], socket 0[core 3[hwt 0-1]], socket 0[core 4[hwt 0-1]], socket 0[core 5[hwt 0-1]], socket 0[core 6[hwt 0-1]], socket 0[core 7[hwt 0-1]], socket 0[core 8[hwt 0-1]], socket 0[core 9[hwt 0-1]], socket 0[core 10[hwt 0-1]], socket 0[core 11[hwt 0-1]]: [BB/BB/BB/BB/BB/BB/BB/BB/BB/BB/BB/BB][../../../../../../../../../../../..]
+[eu-c7-077-11:35178] MCW rank 2 bound to socket 1[core 12[hwt 0-1]], socket 1[core 13[hwt 0-1]], socket 1[core 14[hwt 0-1]], socket 1[core 15[hwt 0-1]], socket 1[core 16[hwt 0-1]], socket 1[core 17[hwt 0-1]], socket 1[core 18[hwt 0-1]], socket 1[core 19[hwt 0-1]], socket 1[core 20[hwt 0-1]], socket 1[core 21[hwt 0-1]], socket 1[core 22[hwt 0-1]], socket 1[core 23[hwt 0-1]]: [../../../../../../../../../../../..][BB/BB/BB/BB/BB/BB/BB/BB/BB/BB/BB/BB]
+[eu-c7-077-02:45727] MCW rank 1 bound to socket 0[core 0[hwt 0-1]], socket 0[core 1[hwt 0-1]], socket 0[core 2[hwt 0-1]], socket 0[core 3[hwt 0-1]], socket 0[core 4[hwt 0-1]], socket 0[core 5[hwt 0-1]], socket 0[core 6[hwt 0-1]], socket 0[core 7[hwt 0-1]], socket 0[core 8[hwt 0-1]], socket 0[core 9[hwt 0-1]], socket 0[core 10[hwt 0-1]], socket 0[core 11[hwt 0-1]]: [BB/BB/BB/BB/BB/BB/BB/BB/BB/BB/BB/BB][../../../../../../../../../../../..]
+[eu-c7-077-02:45727] MCW rank 3 bound to socket 1[core 12[hwt 0-1]], socket 1[core 13[hwt 0-1]], socket 1[core 14[hwt 0-1]], socket 1[core 15[hwt 0-1]], socket 1[core 16[hwt 0-1]], socket 1[core 17[hwt 0-1]], socket 1[core 18[hwt 0-1]], socket 1[core 19[hwt 0-1]], socket 1[core 20[hwt 0-1]], socket 1[core 21[hwt 0-1]], socket 1[core 22[hwt 0-1]], socket 1[core 23[hwt 0-1]]: [../../../../../../../../../../../..][BB/BB/BB/BB/BB/BB/BB/BB/BB/BB/BB/BB]
+Execution Times:
+  Compute:     5.6955s
+  MPI_Irecv:   0.0031s
+  MPI_Isend:   0.0026s
+  Packing:     0.0000s
+  Unpacking:   0.0000s
+  MPI_Waitall: 20.7885s
+---------------------
+Total Time:    26.6442s
+L2 Norm:       0.9887095465
