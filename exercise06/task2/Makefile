@@ -1,7 +1,7 @@
 CXXFLAGS = -O3 -g -std=c++11 -Wall -Wfatal-errors
 BINARIES = jacobi jacobi_opt
-#MPICXX = CC daint
-MPICXX = mpicxx
+MPICXX = mpicxx # euler
+# MPICXX = CC # piz daint
 
 .SECONDARY:
 .PHONY: all
