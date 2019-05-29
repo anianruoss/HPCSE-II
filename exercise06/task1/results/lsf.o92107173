@@ -1,0 +1,51 @@
+Sender: LSF System <lsfadmin@eu-c7-106-05>
+Subject: Job 92107173: <mpirun -n 96 ./heat2d_mpi> in cluster <euler> Done
+
+Job <mpirun -n 96 ./heat2d_mpi> was submitted from host <eu-login-08-ng> by user <anruoss> in cluster <euler> at Wed May 29 22:23:06 2019
+Job was executed on host(s) <24*eu-c7-106-05>, in queue <normal.4h>, as user <anruoss> in cluster <euler> at Wed May 29 22:23:19 2019
+                            <24*eu-c7-114-06>
+                            <24*eu-c7-112-06>
+                            <24*eu-c7-112-02>
+</cluster/home/anruoss> was used as the home directory.
+</cluster/home/anruoss/HPCSE-II/exercise06/task1> was used as the working directory.
+Started at Wed May 29 22:23:19 2019
+Terminated at Wed May 29 22:23:36 2019
+Results reported at Wed May 29 22:23:36 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+mpirun -n 96 ./heat2d_mpi
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   1324.43 sec.
+    Max Memory :                                 1201 MB
+    Average Memory :                             313.00 MB
+    Total Requested Memory :                     98304.00 MB
+    Delta Memory :                               97103.00 MB
+    Max Swap :                                   -
+    Max Processes :                              27
+    Max Threads :                                80
+    Run time :                                   29 sec.
+    Turnaround time :                            30 sec.
+
+The output (if any) follows:
+
+   Time (s)    Grid0      Total  
+-------------|---------|---------
+Smoothing    | 3.993   |  3.993  
+Residual     | 1.598   |  1.598  
+Restriction  | 0.000   |  0.000  
+Prolongation | 0.000   |  0.000  
+L2Norm       | 6.009   |  6.009  
+-------------|---------|---------
+Total        | 11.600   |  11.600  
+-------------|---------|---------
+
+Running Time      : 13.509s
+L2Norm: 70812.9164
