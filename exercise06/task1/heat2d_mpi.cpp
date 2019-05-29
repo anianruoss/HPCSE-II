@@ -5,7 +5,7 @@
 // License: Use if you like, but give us credit.                      //
 /**********************************************************************/
 
-#include "heat2d_cpu.hpp"
+#include "heat2d_mpi.hpp"
 #include "string.h"
 #include <chrono>
 #include <limits>
@@ -16,7 +16,7 @@ pointsInfo __p;
 
 int main(int argc, char *argv[]) {
   double tolerance =
-      1e-0;       // L2 Difference Tolerance before reaching convergence.
+      1e-0;      // L2 Difference Tolerance before reaching convergence.
   size_t N0 = 10; // 2^N0 + 1 elements per side
 
   // Multigrid parameters -- Find the best configuration!
@@ -32,6 +32,8 @@ int main(int argc, char *argv[]) {
     applyJacobi(g, 0, downRelaxations); // Relaxing the finest grid first
     calculateResidual(g, 0);            // Calculating Initial Residual
 
+    // not needed for gridCount == 1
+    /*
     for (size_t grid = 1; grid < gridCount; grid++) // Going down the V-Cycle
     {
       applyRestriction(g, grid); // Restricting the residual to the coarser
@@ -39,13 +41,17 @@ int main(int argc, char *argv[]) {
       applyJacobi(g, grid, downRelaxations); // Smoothing coarser level
       calculateResidual(g, grid);            // Calculating Coarse Grid Residual
     }
+    */
 
+    // not needed for gridCount == 1
+    /*
     for (size_t grid = gridCount - 1; grid > 0; grid--) // Going up the V-Cycle
     {
       applyProlongation(
           g, grid); // Prolonging solution for coarser level up to finer level
       applyJacobi(g, grid, upRelaxations); // Smoothing finer level
     }
+    */
 
     calculateL2Norm(g, 0); // Calculating Residual L2 Norm
   }                        // Multigrid solver end
@@ -64,14 +70,15 @@ void applyJacobi(gridLevel *g, size_t l, size_t relaxations) {
   double h1 = 0.25;
   double h2 = g[l].h * g[l].h;
   for (size_t r = 0; r < relaxations; r++) {
-    double **tmp = g[l].Un;
+    double *tmp = g[l].Un;
     g[l].Un = g[l].U;
     g[l].U = tmp;
     for (size_t i = 1; i < g[l].N - 1; i++)
       for (size_t j = 1; j < g[l].N - 1; j++) // Perform a Jacobi Iteration
-        g[l].U[i][j] =
-            (g[l].Un[i - 1][j] + g[l].Un[i + 1][j] + g[l].Un[i][j - 1] +
-             g[l].Un[i][j + 1] + g[l].f[i][j] * h2) *
+        g[l].U[i * g[l].N + j] =
+            (g[l].Un[(i - 1) * g[l].N + j] + g[l].Un[(i + 1) * g[l].N + j] +
+             g[l].Un[i * g[l].N + j - 1] + g[l].Un[i * g[l].N + j + 1] +
+             g[l].f[i * g[l].N + j] * h2) *
             h1;
   }
 
@@ -86,10 +93,12 @@ void calculateResidual(gridLevel *g, size_t l) {
 
   for (size_t i = 1; i < g[l].N - 1; i++)
     for (size_t j = 1; j < g[l].N - 1; j++)
-      g[l].Res[i][j] = g[l].f[i][j] +
-                       (g[l].U[i - 1][j] + g[l].U[i + 1][j] - 4 * g[l].U[i][j] +
-                        g[l].U[i][j - 1] + g[l].U[i][j + 1]) *
-                           h2;
+      g[l].Res[i * g[l].N + j] =
+          g[l].f[i * g[l].N + j] +
+          (g[l].U[(i - 1) * g[l].N + j] + g[l].U[(i + 1) * g[l].N + j] -
+           4 * g[l].U[i * g[l].N + j] + g[l].U[i * g[l].N + j - 1] +
+           g[l].U[i * g[l].N + j + 1]) *
+              h2;
 
   auto t1 = std::chrono::system_clock::now();
   residualTime[l] += std::chrono::duration<double>(t1 - t0).count();
@@ -102,11 +111,12 @@ void calculateL2Norm(gridLevel *g, size_t l) {
 
   for (size_t i = 0; i < g[l].N; i++)
     for (size_t j = 0; j < g[l].N; j++)
-      g[l].Res[i][j] = g[l].Res[i][j] * g[l].Res[i][j];
+      g[l].Res[i * g[l].N + j] =
+          g[l].Res[i * g[l].N + j] * g[l].Res[i * g[l].N + j];
 
   for (size_t i = 0; i < g[l].N; i++)
     for (size_t j = 0; j < g[l].N; j++)
-      tmp += g[l].Res[i][j];
+      tmp += g[l].Res[i * g[l].N + j];
 
   g[l].L2Norm = sqrt(tmp);
   g[l].L2NormDiff = fabs(g[l].L2NormPrev - g[l].L2Norm);
@@ -117,6 +127,8 @@ void calculateL2Norm(gridLevel *g, size_t l) {
   L2NormTime[l] += std::chrono::duration<double>(t1 - t0).count();
 }
 
+// not needed for gridCount == 1
+/*
 void applyRestriction(gridLevel *g, size_t l) {
   auto t0 = std::chrono::system_clock::now();
 
@@ -142,7 +154,10 @@ void applyRestriction(gridLevel *g, size_t l) {
   auto t1 = std::chrono::system_clock::now();
   restrictionTime[l] += std::chrono::duration<double>(t1 - t0).count();
 }
+*/
 
+// not needed for gridCount == 1
+/*
 void applyProlongation(gridLevel *g, size_t l) {
   auto t0 = std::chrono::system_clock::now();
 
@@ -168,6 +183,7 @@ void applyProlongation(gridLevel *g, size_t l) {
   auto t1 = std::chrono::system_clock::now();
   prolongTime[l] += std::chrono::duration<double>(t1 - t0).count();
 }
+*/
 
 gridLevel *generateInitialConditions(size_t N0, size_t gridCount) {
   // Default values:
@@ -203,18 +219,10 @@ gridLevel *generateInitialConditions(size_t N0, size_t gridCount) {
     g[i].N = pow(2, N0 - i) + 1;
     g[i].h = 1.0 / (g[i].N - 1);
 
-    g[i].U = (double **)malloc(sizeof(double *) * g[i].N);
-    for (size_t j = 0; j < g[i].N; j++)
-      g[i].U[j] = (double *)malloc(sizeof(double) * g[i].N);
-    g[i].Un = (double **)malloc(sizeof(double *) * g[i].N);
-    for (size_t j = 0; j < g[i].N; j++)
-      g[i].Un[j] = (double *)malloc(sizeof(double) * g[i].N);
-    g[i].Res = (double **)malloc(sizeof(double *) * g[i].N);
-    for (size_t j = 0; j < g[i].N; j++)
-      g[i].Res[j] = (double *)malloc(sizeof(double) * g[i].N);
-    g[i].f = (double **)malloc(sizeof(double *) * g[i].N);
-    for (size_t j = 0; j < g[i].N; j++)
-      g[i].f[j] = (double *)malloc(sizeof(double) * g[i].N);
+    g[i].U = (double *)calloc(g[i].N * g[i].N, sizeof(double));
+    g[i].Un = (double *)calloc(g[i].N * g[i].N, sizeof(double));
+    g[i].Res = (double *)calloc(g[i].N * g[i].N, sizeof(double));
+    g[i].f = (double *)calloc(g[i].N * g[i].N, sizeof(double));
 
     g[i].L2Norm = 0.0;
     g[i].L2NormPrev = std::numeric_limits<double>::max();
@@ -224,17 +232,17 @@ gridLevel *generateInitialConditions(size_t N0, size_t gridCount) {
   // Initial Guess
   for (size_t i = 0; i < g[0].N; i++)
     for (size_t j = 0; j < g[0].N; j++)
-      g[0].U[i][j] = 1.0;
+      g[0].U[i * g[0].N + j] = 1.0;
 
   // Boundary Conditions
   for (size_t i = 0; i < g[0].N; i++)
-    g[0].U[0][i] = 0.0;
+    g[0].U[i] = 0.0;
   for (size_t i = 0; i < g[0].N; i++)
-    g[0].U[g[0].N - 1][i] = 0.0;
+    g[0].U[(g[0].N - 1) * g[0].N + i] = 0.0;
   for (size_t i = 0; i < g[0].N; i++)
-    g[0].U[i][0] = 0.0;
+    g[0].U[i * g[0].N] = 0.0;
   for (size_t i = 0; i < g[0].N; i++)
-    g[0].U[i][g[0].N - 1] = 0.0;
+    g[0].U[i * g[0].N + g[0].N - 1] = 0.0;
 
   // F
   for (size_t i = 0; i < g[0].N; i++)
@@ -243,7 +251,7 @@ gridLevel *generateInitialConditions(size_t N0, size_t gridCount) {
       double x = i * h;
       double y = j * h;
 
-      g[0].f[i][j] = 0.0;
+      g[0].f[i * g[0].N + j] = 0.0;
 
       for (size_t c = 0; c < __p.nCandles; c++) {
         double c3 = pars[c * 4 + 0]; // x0
@@ -252,7 +260,8 @@ gridLevel *generateInitialConditions(size_t N0, size_t gridCount) {
         c1 *= 100000; // intensity
         double c2 = pars[c * 4 + 3];
         c2 *= 0.01; // Width
-        g[0].f[i][j] += c1 * exp(-(pow(c4 - y, 2) + pow(c3 - x, 2)) / c2);
+        g[0].f[i * g[0].N + j] +=
+            c1 * exp(-(pow(c4 - y, 2) + pow(c3 - x, 2)) / c2);
       }
     }
 
@@ -261,13 +270,8 @@ gridLevel *generateInitialConditions(size_t N0, size_t gridCount) {
 
 void freeGrids(gridLevel *g, size_t gridCount) {
   for (size_t i = 0; i < gridCount; i++) {
-    for (size_t j = 0; j < g[i].N; j++)
-      free(g[i].U[j]);
-    for (size_t j = 0; j < g[i].N; j++)
-      free(g[i].f[j]);
-    for (size_t j = 0; j < g[i].N; j++)
-      free(g[i].Res[j]);
     free(g[i].U);
+    free(g[i].Un);
     free(g[i].f);
     free(g[i].Res);
   }
