@@ -2,13 +2,171 @@
 
 \usepackage{booktabs}
 \usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage[capitalise]{cleveref}
+
+\setlength\parindent{0pt}
 
 \begin{document}
+    \title{HPCSE II - Exercise 6}
+    \author{Anian Ruoss}
+    \maketitle
+
+    \section*{Task 1}
+    \label{sec:Task1}
+
+    We parallelize the heat2D model for the single-grid case.
+    For ease of communication with MPI we change the \lstinline{gridLevel}
+    struct to store the grids with \lstinline{double *} instead of
+    \lstinline{double **}.
+    First, we establish the problem geometry with
+    \lstinline{MPI_Dims_create()}, \lstinline{MPI_Cart_create()}, and
+    \lstinline{MPI_Cart_shift()}.
+    Since the grid size is not a multiple of two we have to pay attention to
+    the boundary cases.
+    Every rank allocates its own subgrids for \lstinline{U}, \lstinline{Un},
+    \lstinline{Res}, and \lstinline{f}.
+    The root rank then initializes the problem on the entire grid and
+    distributes the initial values to each rank.
+    Since this step is only performed once we do not employ custom data
+    types even though this incurs some memory overhead due to data duplication.
+
+    \subsection*{a)}
+    \label{subsec:Task1a}
+
+    After every Jacobi iteration we need to exchange the boundaries between
+    neighboring ranks.
+    Since we cannot pass the grid communicator to \lstinline{applyJacobi()}
+    (as this method is declared in \lstinline{heat2d_mpi.hpp} where MPI is
+    not initialized yet), we move the loop over the
+    \lstinline{downRelaxations} out of \lstinline{applyJacobi()}.
+    Next, we define data types for the contiguous and non-contiguous
+    boundaries.
+    Finally, we only need to adapt the loop boundaries to the subgrid sizes.
+
+    \subsection*{b)}
+    \label{subsec:Task1b}
+
+    The \lstinline{calculateResidual()} method is trivially parallelizable
+    by adapting the loop boundaries to the subgrid sizes.
+    For \lstinline{calculateL2Norm()} we need to be careful not to loop over
+    the ghost cells (we make use of the fact that the Dirichlet boundary
+    condition is zero).
+    After computing the sum of squared residuals for every subgrid we reduce
+    the sum with MPI before computing the $L_2$-norm.
+
+    \subsection*{Evaluation}
+    \label{subsec:Task1Eval}
+
+    We run the baseline sequential model and compare it with the execution
+    times from running the parallelized model on one, two, and four full nodes
+    on Euler.
+    We display the running times
+    in~\cref{lst:Baseline,lst:OneNode,lst:TwoNodes,lst:FourNodes}.
+
+    \begin{lstlisting}[basicstyle=\scriptsize, caption={Output from running
+    the baseline sequential model on one full node.}, label={lst:Baseline}]
+        Time (s)     Grid0 Total
+        -------------|---------|---------
+        Smoothing | 570.226 | 570.226
+        Residual | 204.614 | 204.614
+        Restriction | 0.000 | 0.000
+        Prolongation | 0.000 | 0.000
+        L2Norm | 219.811 | 219.811
+        -------------|---------|---------
+        Total | 994.652 | 994.652
+        -------------|---------|---------
+
+        Running Time : 994.954s
+        L2Norm: 70812.9164
+    \end{lstlisting}
+    \begin{lstlisting}[basicstyle=\scriptsize, caption={Output from running
+    the parallelized model on one full node.}, label={lst:OneNode}]
+        Time (s)    Grid0 Total
+        -------------|---------|---------
+        Smoothing | 18.228 | 18.228
+        Residual | 6.370 | 6.370
+        Restriction | 0.000 | 0.000
+        Prolongation | 0.000 | 0.000
+        L2Norm | 9.528 | 9.528
+        -------------|---------|---------
+        Total | 34.126 | 34.126
+        -------------|---------|---------
+
+        Running Time : 35.273s
+        L2Norm: 70812.9164
+    \end{lstlisting}
+    \begin{lstlisting}[basicstyle=\scriptsize, caption={Output from running
+    the parallelized model on two full nodes.}, label={lst:TwoNodes}]
+        Time (s)    Grid0 Total
+        -------------|---------|---------
+        Smoothing | 8.896 | 8.896
+        Residual | 3.271 | 3.271
+        Restriction | 0.000 | 0.000
+        Prolongation | 0.000 | 0.000
+        L2Norm | 7.684 | 7.684
+        -------------|---------|---------
+        Total | 19.851 | 19.851
+        -------------|---------|---------
+
+        Running Time : 19.926s
+        L2Norm: 70812.9164
+    \end{lstlisting}
+    \begin{lstlisting}[basicstyle=\scriptsize, caption={Output from running
+    the parallelized model on two full nodes.}, label={lst:FourNodes}]
+        Time (s)    Grid0 Total
+        -------------|---------|---------
+        Smoothing | 3.993 | 3.993
+        Residual | 1.598 | 1.598
+        Restriction | 0.000 | 0.000
+        Prolongation | 0.000 | 0.000
+        L2Norm | 6.009 | 6.009
+        -------------|---------|---------
+        Total | 11.600 | 11.600
+        -------------|---------|---------
+
+        Running Time : 13.509s
+        L2Norm: 70812.9164
+    \end{lstlisting}
+
+    \newpage
+
+    It can be observed that all runs compute the same final $L_2$-norm value.
+    We display the strong scaling speed-ups and efficiencies
+    in~\cref{tab:Runtimes}.
+    Both \lstinline{applyJacobi()} and \lstinline{calculateResidual()}
+    achieve speedups that exceed $100$\%.
+    This is due to the fact that we do not include the communication time in
+    the measured kernel time for simplicity of the implementation.
+    Hence, it is more meaningful to analyze the speed-up and efficiency for
+    the total running time.
+    We observe that for one and two nodes we achieve perfect
+    efficiency\footnote{We believe that the efficiency is slightly above
+    $100$\% as we avoid the loop overhead by commenting out the prolongation-
+    and restriction-loops since we only consider the single-grid case.},
+    whereas we are probably limited by an increased communication overhead
+    when running on four full nodes.
+    Lastly, we note that the sharp efficiency decline for
+    \lstinline{calculateL2Norm()} is due to the expensive collective
+    \lstinline{MPI_Allreduce()} operation.
 
     \begin{table}
+        \caption{Strong scaling analysis for the parallelized heat2D model.}
+        \label{tab:Runtimes}
+        \begin{center}
+            \resizebox{.5\textwidth}{!}{ \input{./task1/results/runtimes} }
+        \end{center}
+    \end{table}
+
+    \begin{table}
+        \caption{}
+        \label{tab:StrongScaling}
         \resizebox{\textwidth}{!}{ \input{./task2/results/strong_scaling} }
     \end{table}
     \begin{table}
+        \caption{}
+        \label{tab:WeakScaling}
         \resizebox{\textwidth}{!}{ \input{./task2/results/weak_scaling} }
     \end{table}
 
