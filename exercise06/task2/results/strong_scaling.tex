@@ -1,10 +1,10 @@
-\begin{tabular}{ccccc}
+\begin{tabular}{cccccc}
     \toprule
-    \textbf{Nodes} & \textbf{MPI Processes per Node} & \textbf{OpenMP Threads per MPI Process} & \textbf{MPI\_Waitall} & \textbf{Total Time} \\
+    Nodes & MPI Ranks / Node & OpenMP Threads / MPI Rank & Compute & MPI\_Waitall & Total Time \\
     \midrule
-    1 & 24 & 1 & 2.90 & 6.96 \\
-    1 & 4 & 6 & 4.46 & 14.43 \\
-    2 & 2 & 6 & 13.39 & 23.00 \\
-    4 & 1 & 6 & 67.85 & 77.21 \\
+    1 & 24 & 1 & 4.53 & 1.04 & 5.59       \\
+    1 & 4 & 6 & 9.97 & 4.46 & 14.43      \\
+    2 & 2 & 6 & 9.53 & 13.39 & 23.00      \\
+    4 & 1 & 6 & 9.16 & 67.85 & 77.21      \\
     \bottomrule
 \end{tabular}

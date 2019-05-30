@@ -1,12 +1,12 @@
-\documentclass{article}
+\documentclass[11pt]{article}
 
 \usepackage{booktabs}
+\usepackage{float}
 \usepackage{graphicx}
-\usepackage{multirow}
 \usepackage{listings}
+\usepackage{multirow}
+\usepackage[parfill]{parskip}
 \usepackage[capitalise]{cleveref}
-
-\setlength\parindent{0pt}
 
 \begin{document}
     \title{HPCSE II - Exercise 6}
@@ -66,71 +66,73 @@
     in~\cref{lst:Baseline,lst:OneNode,lst:TwoNodes,lst:FourNodes}.
 
     \begin{lstlisting}[basicstyle=\scriptsize, caption={Output from running
-    the baseline sequential model on one full node.}, label={lst:Baseline}]
-        Time (s)     Grid0 Total
-        -------------|---------|---------
-        Smoothing | 570.226 | 570.226
-        Residual | 204.614 | 204.614
-        Restriction | 0.000 | 0.000
-        Prolongation | 0.000 | 0.000
-        L2Norm | 219.811 | 219.811
-        -------------|---------|---------
-        Total | 994.652 | 994.652
-        -------------|---------|---------
+    the baseline sequential model on one full node.}, float, floatplacement=h,
+    frame=single, label={lst:Baseline}]
+    Time (s)     Grid0 Total
+    -------------|---------|---------
+    Smoothing | 570.226 | 570.226
+    Residual | 204.614 | 204.614
+    Restriction | 0.000 | 0.000
+    Prolongation | 0.000 | 0.000
+    L2Norm | 219.811 | 219.811
+    -------------|---------|---------
+    Total | 994.652 | 994.652
+    -------------|---------|---------
 
-        Running Time : 994.954s
-        L2Norm: 70812.9164
+    Running Time : 994.954s
+    L2Norm: 70812.9164
     \end{lstlisting}
     \begin{lstlisting}[basicstyle=\scriptsize, caption={Output from running
-    the parallelized model on one full node.}, label={lst:OneNode}]
-        Time (s)    Grid0 Total
-        -------------|---------|---------
-        Smoothing | 18.228 | 18.228
-        Residual | 6.370 | 6.370
-        Restriction | 0.000 | 0.000
-        Prolongation | 0.000 | 0.000
-        L2Norm | 9.528 | 9.528
-        -------------|---------|---------
-        Total | 34.126 | 34.126
-        -------------|---------|---------
+    the parallelized model on one full node.}, float, floatplacement=h,
+    frame=single, label={lst:OneNode}]
+    Time (s)    Grid0 Total
+    -------------|---------|---------
+    Smoothing | 18.228 | 18.228
+    Residual | 6.370 | 6.370
+    Restriction | 0.000 | 0.000
+    Prolongation | 0.000 | 0.000
+    L2Norm | 9.528 | 9.528
+    -------------|---------|---------
+    Total | 34.126 | 34.126
+    -------------|---------|---------
 
-        Running Time : 35.273s
-        L2Norm: 70812.9164
+    Running Time : 35.273s
+    L2Norm: 70812.9164
     \end{lstlisting}
     \begin{lstlisting}[basicstyle=\scriptsize, caption={Output from running
-    the parallelized model on two full nodes.}, label={lst:TwoNodes}]
-        Time (s)    Grid0 Total
-        -------------|---------|---------
-        Smoothing | 8.896 | 8.896
-        Residual | 3.271 | 3.271
-        Restriction | 0.000 | 0.000
-        Prolongation | 0.000 | 0.000
-        L2Norm | 7.684 | 7.684
-        -------------|---------|---------
-        Total | 19.851 | 19.851
-        -------------|---------|---------
+    the parallelized model on two full nodes.}, float, floatplacement=h,
+    frame=single, label={lst:TwoNodes}]
+    Time (s)    Grid0 Total
+    -------------|---------|---------
+    Smoothing | 8.896 | 8.896
+    Residual | 3.271 | 3.271
+    Restriction | 0.000 | 0.000
+    Prolongation | 0.000 | 0.000
+    L2Norm | 7.684 | 7.684
+    -------------|---------|---------
+    Total | 19.851 | 19.851
+    -------------|---------|---------
 
-        Running Time : 19.926s
-        L2Norm: 70812.9164
+    Running Time : 19.926s
+    L2Norm: 70812.9164
     \end{lstlisting}
     \begin{lstlisting}[basicstyle=\scriptsize, caption={Output from running
-    the parallelized model on two full nodes.}, label={lst:FourNodes}]
-        Time (s)    Grid0 Total
-        -------------|---------|---------
-        Smoothing | 3.993 | 3.993
-        Residual | 1.598 | 1.598
-        Restriction | 0.000 | 0.000
-        Prolongation | 0.000 | 0.000
-        L2Norm | 6.009 | 6.009
-        -------------|---------|---------
-        Total | 11.600 | 11.600
-        -------------|---------|---------
+    the parallelized model on two full nodes.}, float, floatplacement=h,
+    frame=single, label={lst:FourNodes}]
+    Time (s)    Grid0 Total
+    -------------|---------|---------
+    Smoothing | 3.993 | 3.993
+    Residual | 1.598 | 1.598
+    Restriction | 0.000 | 0.000
+    Prolongation | 0.000 | 0.000
+    L2Norm | 6.009 | 6.009
+    -------------|---------|---------
+    Total | 11.600 | 11.600
+    -------------|---------|---------
 
-        Running Time : 13.509s
-        L2Norm: 70812.9164
+    Running Time : 13.509s
+    L2Norm: 70812.9164
     \end{lstlisting}
-
-    \newpage
 
     It can be observed that all runs compute the same final $L_2$-norm value.
     We display the strong scaling speed-ups and efficiencies
@@ -154,20 +156,103 @@
     \begin{table}
         \caption{Strong scaling analysis for the parallelized heat2D model.}
         \label{tab:Runtimes}
+        \vspace{.25cm}
         \begin{center}
             \resizebox{.5\textwidth}{!}{ \input{./task1/results/runtimes} }
         \end{center}
     \end{table}
 
+    \section*{Task 2}
+    \label{sec:Task2}
+
+    \subsection*{a)}
+    \label{subsec:Task2a}
+
+    We implement the first hybrid approach with MPI and OpenMP by adding
+    \lstinline{#pragma omp parallel for collapse(3)} in front of the jacobi
+    step loop.
+    This does not induce a race condition since all iterations are
+    independent from each other.
+
+    \subsection*{Evaluation}
+    \label{subsec:Task2Eval}
+
+    To avoid inconsistent $L_2$-norm values when dividing the grid by $12$ or
+    $24$ MPI ranks, we increase the grid size to $768$.
+    We use the following command to run hybrid jobs on Euler with $N$ nodes,
+    $M$ MPI ranks and $T$ OpenMP threads:
+
+    \begin{lstlisting}[basicstyle=\tiny]
+    bsub -R fullnode -n 24*N
+    "unset LSB_AFFINITY_HOSTFILE;
+    OMP_NUM_THREADS=T mpirun -n M --map-by node:PE=T --report-bindings ./hybrid"
+    \end{lstlisting}
+
+    We first try to gauge the performance loss incurred by network
+    communication.
+    To this end, we limit the total number of processes to $24$ and measure
+    the running times when distributing these processes across MPI/OpenMP
+    and multiple nodes.
+    We display the running times in~\cref{tab:StrongScaling}.
+
     \begin{table}
-        \caption{}
+        \caption{Comparison of intra-node and network communication effects.}
         \label{tab:StrongScaling}
-        \resizebox{\textwidth}{!}{ \input{./task2/results/strong_scaling} }
+        \vspace{.25cm}
+        \begin{center}
+            \resizebox{\textwidth}{!}{ \input{./task2/results/strong_scaling} }
+        \end{center}
     \end{table}
+
+    The first row displays our baseline which uses $24$ MPI ranks distributed
+    evenly among both sockets of one node.
+    Hence, our baseline relies on intra-node communication only.
+    The second row displays the output from running our hybrid code with $4$
+    MPI ranks with $6$ OpenMP threads each, all running on the same node.
+    The first two ranks are assigned to the first socket, the last two ranks
+    to the second socket.
+    We observe that --- although the number of computed entries increases
+    by a factor of $6$ for every rank --- the total compute time increases
+    only by a factor of $\approx 2.2$ meaning that we achieve an efficiency
+    of $\approx 45$\% when considering only OpenMP.\@
+    Compared to the baseline, this hybrid model uses $6$ times fewer ranks
+    which means that the number of communications decreases from $92$ to $8$.
+    However, every rank has to exchange $\approx 3.5$ times more boundary
+    entries and we observe that this incurs an increase in the overall
+    \lstinline{MPI_Waitall} time for the hybrid intra-node case.
+    This effect becomes even stronger when we distribute the MPI ranks
+    across multiple nodes.
+    The third row displays the execution times for a run with $4$ MPI ranks
+    with $6$ OpenMP threads each, of which $2$ ranks are on a separate node.
+    The last row displays the execution times for with $4$ MPI ranks
+    with $6$ OpenMP threads each, where every rank is on a node of its own.
+    For this case, where all communication is performed over the network, we
+    observe a substantial increase in \lstinline{MPI_Waitall} time compared to
+    the second row which relies on intra-node communication only.
+
+    Next, we try to measure whether using a hybrid model has a positive effect
+    on the total running time.
+    We run the hybrid model with $2$ MPI ranks per node and $12$ OpenMP
+    threads per rank, making sure that each rank is assigned to its own socket.
+    As a consequence we reduce the amount of network communication between MPI
+    ranks.
+    We compare our hybrid model against a pure MPI model on one, two, and
+    four nodes and display the running times in~\cref{tab:WeakScaling}.
+
     \begin{table}
-        \caption{}
+        \caption{Runtime comparison of MPI and hybrid MPI/OpenMP models.}
         \label{tab:WeakScaling}
-        \resizebox{\textwidth}{!}{ \input{./task2/results/weak_scaling} }
+        \vspace{.25cm}
+        \begin{center}
+            \resizebox{\textwidth}{!}{ \input{./task2/results/weak_scaling} }
+        \end{center}
     \end{table}
+
+    It can be observed that for one and two nodes the increased message
+    sizes --- due to the smaller number of MPI ranks --- supersedes the
+    reduced cost of less communication over the network.
+    However, for four nodes the \lstinline{MPI_Waitall} time is already
+    smaller for the hybrid case and we would except the hybrid model to
+    significantly outperform the MPI model on more nodes.
 
 \end{document}
