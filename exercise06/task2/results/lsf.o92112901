@@ -1,0 +1,45 @@
+Sender: LSF System <lsfadmin@eu-c7-113-06>
+Subject: Job 92112901: <mpirun -n 24 ./jacobi> in cluster <euler> Done
+
+Job <mpirun -n 24 ./jacobi> was submitted from host <eu-login-02-ng> by user <anruoss> in cluster <euler> at Thu May 30 01:47:58 2019
+Job was executed on host(s) <24*eu-c7-113-06>, in queue <normal.4h>, as user <anruoss> in cluster <euler> at Thu May 30 02:30:14 2019
+</cluster/home/anruoss> was used as the home directory.
+</cluster/home/anruoss/HPCSE-II/exercise06/task2> was used as the working directory.
+Started at Thu May 30 02:30:14 2019
+Terminated at Thu May 30 02:30:22 2019
+Results reported at Thu May 30 02:30:22 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+mpirun -n 24 ./jacobi
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   141.98 sec.
+    Max Memory :                                 7388 MB
+    Average Memory :                             7387.00 MB
+    Total Requested Memory :                     24576.00 MB
+    Delta Memory :                               17188.00 MB
+    Max Swap :                                   -
+    Max Processes :                              27
+    Max Threads :                                80
+    Run time :                                   18 sec.
+    Turnaround time :                            2544 sec.
+
+The output (if any) follows:
+
+Execution Times:
+  Compute:     4.5333s
+  MPI_Irecv:   0.0004s
+  MPI_Isend:   0.0028s
+  Packing:     0.0000s
+  Unpacking:   0.0000s
+  MPI_Waitall: 1.0498s
+---------------------
+Total Time:    5.5894s
+L2 Norm:       0.9887095465
